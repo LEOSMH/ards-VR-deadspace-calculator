@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-ARDS Bedside Physiological Calculator & Dead-Space Estimator v13
+ARDS Bedside Physiological Calculator & Dead-Space Estimator v16
 臨床床邊生理指標、死腔預估、可復張性(R/I Ratio)、自主呼吸驅力與生物表型預測計算器 (Streamlit Web App & CLI 雙模工具)
 Based on:
 1. Nuckton 2002 (NEJM) & Sinha 2019 (AJRCCM) - Ventilatory Ratio (VR) & Dead Space
@@ -186,7 +186,7 @@ def run_streamlit():
     """, unsafe_allow_html=True)
     
     st.markdown('<div class="main-title">🫁 ARDS 精準生理監測與生物亞型大師級計算器</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitle">整合 R/I Ratio、AOP 校正驅動壓、通氣強度、自主呼吸 efforts 與發炎表型評估</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">整合 R/I Ratio、AOP 校正驅動壓、通氣強度、自主呼吸 efforts 與發炎表型評估<br>👨‍⚕️ <b>作者：台大醫院呼吸治療師 辛明翰</b> | 📅 初版日期：2026/09/04 | 🔄 最新修訂：2026/09/09</div>', unsafe_allow_html=True)
     
     # 5 Tabs Setup - Sinha Phenotype moved to Tab 1 (immediately after Tab 0)
     tab0, tab1, tab2, tab3, tab4 = st.tabs([
@@ -852,7 +852,9 @@ def run_streamlit():
 
 
     st.markdown("---")
-    st.caption("聲明：本工具僅供臨床醫學學術討論與生理機制模擬使用，實際呼吸器設定與病人處置應由專科醫師依病患臨床即時狀態做出決定。")
+    st.caption("""👨‍⚕️ 作者：台大醫院呼吸治療師 辛明翰 | 📅 初版日期：2026/09/04 | 🔄 最新版本：2026/09/09
+
+聲明：本工具僅供臨床醫學學術討論與生理機制模擬使用，實際呼吸器設定與病人處置應由專科醫師依病患臨床即時狀態做出決定。""")
 
 # ---------------------------------------------------------
 # CLI Command Line Mode
@@ -860,7 +862,7 @@ def run_streamlit():
 def run_cli():
     print("="*65)
     print("      ARDS BEDSIDE PHYSIOLOGICAL & BIOLOGICAL PHENOTYPE MASTER CALCULATOR")
-    print("                臨床生理、死腔、可復張性與生物表型計算器 v9")
+    print("                臨床生理、死腔、可復張性與生物表型計算器 v16")
     print("="*65)
     
     print("\n請選擇您要執行的功能：")
