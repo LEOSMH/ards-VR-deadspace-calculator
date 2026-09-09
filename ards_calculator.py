@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-ARDS Bedside Physiological Calculator & Dead-Space Estimator v8
+ARDS Bedside Physiological Calculator & Dead-Space Estimator v11
 臨床床邊生理指標、死腔預估、可復張性(R/I Ratio)、自主呼吸驅力與生物表型預測計算器 (Streamlit Web App & CLI 雙模工具)
 Based on:
 1. Nuckton 2002 (NEJM) & Sinha 2019 (AJRCCM) - Ventilatory Ratio (VR) & Dead Space
@@ -255,8 +255,8 @@ def run_streamlit():
            - 積極清除與治療肺炎、敗血症、誤吸等原發病因。
         2. **臨床生理個人化分類 (計算器對接)**：
            - 📐 **影像形態學**：**局部型 (Focal)** vs. **非局部/彌漫型 (Non-focal)**。局部型應避免高 PEEP，防止正常肺泡過度膨脹。
-           - 🧬 **生物表型**：**低發炎型 (Type 1)** vs. **高發炎型 (Type 2)**。Type 2 高發炎患者對 Simvastatin 及類固醇等精準治療反應佳 (可於第二頁計算)。
-           - 🔄 **可復張性**：**高復張型 (R/I $\ge$ 0.5)** vs. **低復張型 (R/I < 0.5)**。用以決定病患適合中高 PEEP 還是限制為中低 PEEP (可於第四頁計算)。
+           - 🧬 **生物表型**：**低發炎型 (Type 1)** vs. **高發炎型 (Type 2)**。Type 2 高發炎患者對 Simvastatin 及類固醇等精準治療反應佳 (可於 Tab 1 計算)。
+           - 🔄 **可復張性**：**高復張型 (R/I $\ge$ 0.5)** vs. **低復張型 (R/I < 0.5)**。用以決定病患適合中高 PEEP 還是限制為中低 PEEP (可於 Tab 3 計算)。
         3. **階梯式呼吸支持策略**：
            - **HFNO**：輕度 ARDS 優先，舒適度高，利於咳痰與溝通。
            - **NIV 非侵入正壓**：輕中度無休克患者，優先推薦**頭盔式 (Helmet) 介面**。需於 1-2 小時內評慢評估成效，避免因 NIV 失敗而延誤插管。
@@ -265,6 +265,17 @@ def run_streamlit():
            - 20-25% 患者會併發右心功能不全 (ACP)。高危患者應降低超音波評估門檻，嚴格限制 $P_{plat} < 26\text{–}28 \text{ cmH}_2\text{O}$。
         5. **保守水分管理 (FACCT 策略)**：
            - 休克緩解後採取保守水分限制或利尿策略，追求中性累積水分平衡，能有效減輕肺水腫，顯著縮短 ICU 住院與呼吸器使用天數。
+        """, unsafe_allow_html=True)
+
+        st.markdown("---")
+        st.markdown(r"""
+        ### 📚 核心參考文獻 (Key Reference Papers)
+        1. **Wongtirawit N, Menga LS, Brito R, Docci M, Plens GM, Alcala G, Cantan B, Bosma KJ, Ko M, Roman-Sarita G, Purcell T, Cominesi DR, Greendyk RA, Brochard L.**  
+           *ARDS management beyond the guidelines: a practical physiology-based approach to individualized care.*  
+           **Intensive Care Medicine** (2026). DOI: [10.1007/s00134-026-08563-7](https://doi.org/10.1007/s00134-026-08563-7)
+        2. **Morris IS, Amato M, Kassis EB, Bellani G, Calfee CS, Heunks L, Hodgson C, Nair P, Serpa Neto A, Sahetya S, Summers C, Telias I, Yoshida T, Slutsky AS, Ferguson ND.**  
+           *The medical management of acute respiratory distress syndrome.*  
+           **Intensive Care Medicine** (2026) 52:104–117. DOI: [10.1007/s00134-025-08251-y](https://doi.org/10.1007/s00134-025-08251-y)
         """, unsafe_allow_html=True)
 
 
@@ -445,6 +456,19 @@ def run_streamlit():
         *   **女 (Female)**: $\text{PBW} = 45.5 + 0.91 \times (\text{身高 cm} - 152.4)$
         """, unsafe_allow_html=True)
 
+        # Display VR & Vd/Vt formulas mathematically and note on predicted PaCO2
+        st.subheader("📐 通氣比例 (VR) 與生理死腔估算核心公式 (Sinha 2019 AJRCCM)")
+        st.markdown(r"""
+        1. **通氣比例 (Ventilatory Ratio, VR) 公式**:
+           $$	ext{VR} = rac{V_E (	ext{L/min}) 	imes PaCO_2 (	ext{mmHg})}{	ext{Predicted } V_E 	imes 	ext{Predicted } PaCO_2} = rac{V_E 	imes PaCO_2}{4.0 	imes 	ext{PBW}}$$
+        2. **預估生理死腔比例 ($V_d/V_t$) 估算公式**:
+           $$V_d/V_t = 1.0 - rac{0.70}{	ext{VR}} \quad (	ext{若 } 	ext{VR} \le 0.7 	ext{ 則設定底限為 } 0.30)$$
+
+        > 💡 **關於預測 $PaCO_2$ ($37.5$ vs. $40 	ext{ mmHg}$) 臨床數學與生理說明**：  
+        > *   **理論推導 ($37.5 	ext{ mmHg}$ / 分母 $3.75 	imes 	ext{PBW}$)**：在 Sinha 2019 原始論文之單位轉換推導中，預測動脈 $PaCO_2$ 採用國際單位制正中間值 $5.0 	ext{ kPa} pprox 37.5 	ext{ mmHg}$。搭配預估分鐘通氣量 $	ext{Predicted } V_E = 100 	ext{ mL/kg/min} 	imes 	ext{PBW} = 0.1 	ext{ L/kg/min} 	imes 	ext{PBW}$，理論分母為 $0.1 	imes 37.5 	imes 	ext{PBW} = \mathbf{3.75 	imes 	ext{PBW}}$。  
+        > *   **臨床簡化與應用 ($40 	ext{ mmHg}$ / 分母 $4.0 	imes 	ext{PBW}$)**：為了方便床邊心算與貼合臨床慣用理想正常值 $PaCO_2 = 40 	ext{ mmHg}$，臨床上普遍將分母四捨五入簡化為 **$4.0 	imes 	ext{PBW}$**（即 $0.1 	imes 40 	imes 	ext{PBW}$）。兩者計算出的死腔比例極微小，完全不影響風險分級與床邊決策。本計算器採用臨床通用之 **$4.0 	imes 	ext{PBW}$** 標準。
+        """, unsafe_allow_html=True)
+
         st.subheader("🎛️ 輸入呼吸器與力學參數")
         col_res1, col_res2 = st.columns(2)
         with col_res1:
@@ -590,7 +614,7 @@ def run_streamlit():
             <p style="margin-top:0; font-size:15px; font-weight:600; color:#2980b9;">🛠️ 呼氣單步降壓法 (One-Breath PEEP Reduction) 執行步驟：</p>
             <ol style="margin-bottom:8px; font-size:13px; line-height:1.6; color:#2c3e50; padding-left:20px;">
                 <li><strong>高壓穩定階段 (PEEPhigh Stabilization)</strong>：將病患呼吸器之 PEEP 設為高水平 (通常設定為 <b>15 cmH₂O</b>)，並穩定通氣 <b>10 分鐘</b>，使肺泡充分復張並達到穩態。</li>
-                <li><strong>防氣體陷縮 & 記錄基準潮氣量</strong>：短暫將呼吸速率 (RR) 調降至 <b>6–8 bpm</b> (進行 1-2 次呼吸)，以完全排除氣道捕獲氣體 (Air trapping / Auto-PEEP)。記錄此時的呼出潮氣容積 <b>Vt_high</b> (VTe_high，如 450 mL)。</li>
+                <li><strong>防氣體陷縮 & 記錄基準潮氣量</strong>：短暫將呼吸速率 (RR) 調降至 <b>6–8 bpm</b> (進行 1-2 次呼吸)，以完全排除氣道捕獲氣體 (Air trapping / Auto-PEEP)。記錄此時的呼出潮氣容積 <b>Vt_high</b> ($VTe_{\text{high}}$，如 450 mL)。</li>
                 <li><strong>單步突發降壓 (One-Breath Drop)</strong>：在<b>單次吐氣開始時</b>，將 PEEP 瞬間調降至低水平 (通常設定為 <b>5 cmH₂O</b>)。此時病患會因為 sudden drop 而吐出一口極大的氣體。</li>
                 <li><strong>記錄總呼出容積 (V_exp_drop)</strong>：在降壓那一瞬間的單個呼吸週期中，記錄呼吸器面板上測得的<b>總呼出容積</b> (V_exp_total / V_exp_drop，如 1100 mL)。</li>
                 <li><strong>低壓生理力學量測 (PEEPlow Mechanics)</strong>：讓患者在低 PEEP 水平穩定呼吸 2-3 次。短暫按下「吸氣阻斷鍵 (Inspiratory Hold) 0.2-0.3 秒」測量低 PEEP 下的平台壓 <b>Pplat_low</b> 與呼出潮氣 <b>Vt_low</b>。</li>
