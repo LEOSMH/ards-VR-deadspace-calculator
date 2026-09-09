@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-ARDS Bedside Physiological Calculator & Dead-Space Estimator v11
+ARDS Bedside Physiological Calculator & Dead-Space Estimator v12
 臨床床邊生理指標、死腔預估、可復張性(R/I Ratio)、自主呼吸驅力與生物表型預測計算器 (Streamlit Web App & CLI 雙模工具)
 Based on:
 1. Nuckton 2002 (NEJM) & Sinha 2019 (AJRCCM) - Ventilatory Ratio (VR) & Dead Space
@@ -458,16 +458,26 @@ def run_streamlit():
 
         # Display VR & Vd/Vt formulas mathematically and note on predicted PaCO2
         st.subheader("📐 通氣比例 (VR) 與生理死腔估算核心公式 (Sinha 2019 AJRCCM)")
-        st.markdown(r"""
-        1. **通氣比例 (Ventilatory Ratio, VR) 公式**:
-           $$	ext{VR} = rac{V_E (	ext{L/min}) 	imes PaCO_2 (	ext{mmHg})}{	ext{Predicted } V_E 	imes 	ext{Predicted } PaCO_2} = rac{V_E 	imes PaCO_2}{4.0 	imes 	ext{PBW}}$$
-        2. **預估生理死腔比例 ($V_d/V_t$) 估算公式**:
-           $$V_d/V_t = 1.0 - rac{0.70}{	ext{VR}} \quad (	ext{若 } 	ext{VR} \le 0.7 	ext{ 則設定底限為 } 0.30)$$
+        
+        st.markdown("**1. 通氣比例 (Ventilatory Ratio, VR) 公式：**")
+        st.latex(r"\text{VR} = \frac{V_E \times PaCO_2}{\text{Predicted } V_E \times \text{Predicted } PaCO_2} = \frac{V_E \times PaCO_2}{4.0 \times \text{PBW}}")
+        
+        st.markdown("**2. 預估生理死腔比例 (Vd/Vt) 估算公式：**")
+        st.latex(r"V_d/V_t = 1.0 - \frac{0.70}{\text{VR}} \quad (\text{若 VR } \le 0.7 \text{，則底限設為 0.30})")
 
-        > 💡 **關於預測 $PaCO_2$ ($37.5$ vs. $40 	ext{ mmHg}$) 臨床數學與生理說明**：  
-        > *   **理論推導 ($37.5 	ext{ mmHg}$ / 分母 $3.75 	imes 	ext{PBW}$)**：在 Sinha 2019 原始論文之單位轉換推導中，預測動脈 $PaCO_2$ 採用國際單位制正中間值 $5.0 	ext{ kPa} pprox 37.5 	ext{ mmHg}$。搭配預估分鐘通氣量 $	ext{Predicted } V_E = 100 	ext{ mL/kg/min} 	imes 	ext{PBW} = 0.1 	ext{ L/kg/min} 	imes 	ext{PBW}$，理論分母為 $0.1 	imes 37.5 	imes 	ext{PBW} = \mathbf{3.75 	imes 	ext{PBW}}$。  
-        > *   **臨床簡化與應用 ($40 	ext{ mmHg}$ / 分母 $4.0 	imes 	ext{PBW}$)**：為了方便床邊心算與貼合臨床慣用理想正常值 $PaCO_2 = 40 	ext{ mmHg}$，臨床上普遍將分母四捨五入簡化為 **$4.0 	imes 	ext{PBW}$**（即 $0.1 	imes 40 	imes 	ext{PBW}$）。兩者計算出的死腔比例極微小，完全不影響風險分級與床邊決策。本計算器採用臨床通用之 **$4.0 	imes 	ext{PBW}$** 標準。
-        """, unsafe_allow_html=True)
+        st.info(r"""
+💡 **關於預測 PaCO2 (37.5 mmHg vs. 40 mmHg) 臨床數學與生理說明**：
+
+* **理論推導 (37.5 mmHg / 分母 3.75 × PBW)**：
+  在 Sinha 2019 原始論文中，預測動脈 PaCO2 採用國際單位制正中間值 **5.0 kPa ≈ 37.5 mmHg**。搭配預估每分鐘通氣量 **Predicted Ve = 100 mL/kg/min × PBW = 0.1 L/kg/min × PBW**，理論上的數學分母為：
+  $$0.1 \times 37.5 \times \text{PBW} = \mathbf{3.75 \times \text{PBW}}$$
+
+* **臨床簡化與應用 (40 mmHg / 分母 4.0 × PBW)**：
+  為了方便重症醫護人員在床邊快速心算，並貼合臨床習慣認定的理想正常動脈 **PaCO2 = 40 mmHg** 標準，臨床上普遍將分母四捨五入簡化為 **4.0 × PBW**（即 $0.1 \times 40 \times \text{PBW}$）。
+
+* **床邊決策一致性**：
+  使用 3.75 與 4.0 算出的死腔比例差異小於 6%，完全不影響 Nuckton 2002 的四級風險分級與臨床治療決策。本計算器採用臨床最普及通用之 **4.0 × PBW** 標準。
+""")
 
         st.subheader("🎛️ 輸入呼吸器與力學參數")
         col_res1, col_res2 = st.columns(2)
