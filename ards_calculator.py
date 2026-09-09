@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-ARDS Bedside Physiological Calculator & Dead-Space Estimator v16
+ARDS Bedside Physiological Calculator & Dead-Space Estimator v17
 臨床床邊生理指標、死腔預估、可復張性(R/I Ratio)、自主呼吸驅力與生物表型預測計算器 (Streamlit Web App & CLI 雙模工具)
 Based on:
 1. Nuckton 2002 (NEJM) & Sinha 2019 (AJRCCM) - Ventilatory Ratio (VR) & Dead Space
@@ -768,9 +768,10 @@ def run_streamlit():
             p01 = st.number_input("P0.1 氣道遮斷壓 (cmH2O)", min_value=0.0, max_value=15.0, value=2.0, step=0.5, help="吸氣開始 100 毫秒時的壓力降，反映大腦呼吸驅力。正常人或合適通氣支持下約為 1.5 - 3.5")
             dp_occ = st.number_input("ΔPocc 呼氣末遮斷努力壓差 (cmH2O)", min_value=-50.0, max_value=0.0, value=-12.0, step=1.0, help="進行呼氣末遮斷(end-expiratory hold)時，病患自主吸氣造成的最深壓力降，用以估算動態跨肺驅動壓")
             
-            p_peak_as = st.number_input("自主輔助通氣下 Peak Pressure (cmH2O)", min_value=5.0, max_value=50.0, value=18.0, step=1.0, key="pp_t3")
-            p_peak_as = p_peak_as  # dummy assignment
-            p_plat_as = st.number_input("自主輔助通氣下 Plateau Pressure (cmH2O)", min_value=5.0, max_value=50.0, value=22.0, step=1.0, key="pplat_t3", help="在 PSV 下短暫按下吸氣遮斷(Inspiratory hold)測得。若因肌肉放鬆導致壓力回彈，則 Pplat 會大於 Ppeak")
+            st.info("💡 **自主輔助通氣（如 PSV）下 Ppeak 與 Pplat 測量方式**：\n在自發呼吸/PSV 模式下，於病患吸氣末短暫按下呼吸器的 **吸氣遮斷（Inspiratory hold / i hold，約 0.2–0.3 秒）**。當氣流停止、吸氣肌放鬆後，壓力向上彈升至平台值（Pplat），即可讀取 Pplat 並計算肌肉壓力指數 PMI ($P_{\\text{plat}} - P_{\\text{peak}}$)。")
+
+            p_peak_as = st.number_input("自主輔助通氣下 Peak Pressure (cmH2O)", min_value=5.0, max_value=50.0, value=18.0, step=1.0, key="pp_t3", help="在 PSV 等自主模式下，於吸氣末按下 i hold 之前氣流尚未停止時的最高氣道壓 (Ppeak)")
+            p_plat_as = st.number_input("自主輔助通氣下 Plateau Pressure (cmH2O)", min_value=5.0, max_value=50.0, value=22.0, step=1.0, key="pplat_t3", help="在 PSV 下短暫按下吸氣遮斷 (Inspiratory hold / i hold) 測得。肌肉放鬆後壓力若向上回彈，則 Pplat 會大於 Ppeak")
             
         pmi = p_plat_as - p_peak_as
         
@@ -862,7 +863,7 @@ def run_streamlit():
 def run_cli():
     print("="*65)
     print("      ARDS BEDSIDE PHYSIOLOGICAL & BIOLOGICAL PHENOTYPE MASTER CALCULATOR")
-    print("                臨床生理、死腔、可復張性與生物表型計算器 v16")
+    print("                臨床生理、死腔、可復張性與生物表型計算器 v17")
     print("="*65)
     
     print("\n請選擇您要執行的功能：")
