@@ -449,36 +449,33 @@ def run_streamlit():
         else:
             pbw = st.number_input("預估體重 PBW (kg)", min_value=10.0, max_value=200.0, value=60.0, step=1.0, key="pbw_manual_t2")
             
-        # Compact Collapsible Formula & Derivation Box
+        # Collapsible Formula & Derivation Box (Bright text, normal font size, clean LaTeX)
         with st.expander("📐 點此展開／折疊查看 PBW、VR、Vd/Vt 核心計算公式與生理學推導", expanded=False):
-            st.markdown(r"""
-            <div style="font-size: 13px; line-height: 1.6; color: #2c3e50;">
+            st.markdown("#### 1. PBW 預估體重公式 (Predicted Body Weight)")
+            st.latex(r"\text{PBW (男)} = 50.0 + 0.91 \times (\text{身高 cm} - 152.4)")
+            st.latex(r"\text{PBW (女)} = 45.5 + 0.91 \times (\text{身高 cm} - 152.4)")
 
-            #### 1. PBW 預估體重公式 (Predicted Body Weight)
-            * **男 (Male)**: $\text{PBW} = 50.0 + 0.91 \times (\text{身高 cm} - 152.4)$
-            * **女 (Female)**: $\text{PBW} = 45.5 + 0.91 \times (\text{身高 cm} - 152.4)$
+            st.markdown("#### 2. 通氣比例 (Ventilatory Ratio, VR) 公式 (Sinha 2019 AJRCCM)")
+            st.latex(r"\text{VR} = \frac{V_E \times PaCO_2}{\text{Predicted } V_E \times \text{Predicted } PaCO_2} = \frac{V_E \times PaCO_2}{4.0 \times \text{PBW}}")
 
-            #### 2. 通氣比例 (Ventilatory Ratio, VR) 公式 (Sinha 2019 AJRCCM)
-            $$\text{VR} = \frac{V_E (\text{L/min}) \times PaCO_2 (\text{mmHg})}{\text{Predicted } V_E \times \text{Predicted } PaCO_2} = \frac{V_E \times PaCO_2}{4.0 \times \text{PBW}}$$
+            st.markdown("#### 3. 預估生理死腔比例 ($V_d/V_t$) 估算公式")
+            st.latex(r"V_d/V_t = 1.0 - \frac{0.70}{\text{VR}} \quad (\text{若 } \text{VR} \le 0.7\text{，則底限設為 } 0.30)")
 
-            #### 3. 預估生理死腔比例 ($V_d/V_t$) 估算公式
-            $$V_d/V_t = 1.0 - \frac{0.70}{\text{VR}} \quad (\text{若 } \text{VR} \le 0.7 \text{，則底限設為 } 0.30)$$
+            st.markdown("---")
+            st.markdown("💡 **精準生理學與數學對照說明：**")
 
-            <hr style="margin: 10px 0;">
+            st.markdown(
+                "• **為什麼 $V_d/V_t = 1.0 - \\frac{0.70}{\\text{VR}}$？（分子 $0.70$ 的由來）**\n"
+                "  在健康正常人狀態下（$\\text{VR} = 1.0$），正常生理死腔比例 $V_d/V_t \\approx 0.30$，代表有 **70% ($0.70$)** 的通氣真正到達肺泡參與氣體交換（即健康肺泡通氣分率 $V_A/V_T = 1.0 - 0.30 = 0.70$）。\n"
+                "  在二氧化碳產生量（$V'CO_2$）維持穩定的前提下，通氣比例 $\\text{VR}$ 反映了病患通氣需求的「放大倍數」。因此有效肺泡通氣比例會隨 $\\text{VR}$ 成反比縮小（$V_A/V_T = \\frac{0.70}{\\text{VR}}$），進而導出死腔比例：\n"
+                "  $$V_d/V_t = 1.0 - \\frac{0.70}{\\text{VR}}$$\n"
+                "  *(當 $\\text{VR} = 1.0$ 時，$V_d/V_t = 0.30$；當 $\\text{VR} = 2.0$ 時，死腔急升至 $V_d/V_t = 1.0 - 0.35 = 0.65$)*。"
+            )
 
-            💡 **精準生理學與數學對照說明：**
-
-            * **為什麼 $V_d/V_t = 1.0 - 0.70/\text{VR}$？（分子 0.70 的由來）**  
-              在健康正常人狀態下 ($	ext{VR} = 1.0$)，正常生理死腔比例 $V_d/V_t pprox 0.30$，代表有 **70% ($0.70$)** 的通氣真正到達肺泡參與氣體交換（即健康肺泡通氣分率 $V_A/V_T = 1.0 - 0.30 = 0.70$）。  
-              在二氧化碳產生量 ($V'CO_2$) 維持穩定的前提下，通氣比例 $	ext{VR}$ 反映了病患通氣需求的「放大倍數」。因此有效肺泡通氣比例會隨 $	ext{VR}$ 成反比縮小 ($V_A/V_T = 0.70/\text{VR}$)，進而導出死腔比例：  
-              $$V_d/V_t = 1.0 - \frac{0.70}{\text{VR}}$$  
-              *(當 $\text{VR} = 1.0$ 時，$V_d/V_t = 0.30$；當 $\text{VR} = 2.0$ 時，死腔急升至 $V_d/V_t = 1.0 - 0.35 = 0.65$)*。
-
-            * **關於預測 $PaCO_2$ ($37.5$ vs. $40\text{ mmHg}$) 臨床簡化**：  
-              Sinha 2019 原始論文以國際標準 $5.0\text{ kPa} \approx 37.5\text{ mmHg}$ 及預估通氣量 $100\text{ mL/kg/min} \times \text{PBW}$ 得出理論分母 $3.75 \times \text{PBW}$。床邊簡化採用理想正常值 $40\text{ mmHg}$ 及分母 $4.0 \times \text{PBW}$，計算差異小於 6%，完全不影響風險分級。本計算器採用臨床通用之 $4.0 \times \text{PBW}$ 標準。
-
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                "• **關於預測 $PaCO_2$ ($37.5$ vs. $40\\text{ mmHg}$) 臨床簡化：**\n"
+                "  Sinha 2019 原始論文以國際標準 $5.0\\text{ kPa} \\approx 37.5\\text{ mmHg}$ 及預估通氣量 $100\\text{ mL/kg/min} \\times \\text{PBW}$ 得出理論分母 $3.75 \\times \\text{PBW}$。床邊簡化採用理想正常值 $40\\text{ mmHg}$ 及分母 $4.0 \\times \\text{PBW}$，計算差異小於 6%，完全不影響風險分級。本計算器採用臨床通用之 $4.0 \\times \\text{PBW}$ 標準。"
+            )
 
         st.subheader("🎛️ 輸入呼吸器與力學參數")
         col_res1, col_res2 = st.columns(2)
