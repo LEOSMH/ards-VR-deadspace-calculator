@@ -427,6 +427,17 @@ def run_streamlit():
             研究最初使用包含 30 餘種臨床 and 分子指標的 LCA 分析。為了實用化，Sinha 2020 年開發了這套「簡化模型」——透過 3-4 個關鍵指標（IL-8, Bicarbonate, Protein C, Vasopressor），可在不損失預測力 (AUC 達 0.94 - 0.96) 的前提下在床邊快速分類，對未來 ARDS 的精準用藥 (Targeted Therapy) 具有奠基地位。
         """)
 
+    
+        st.markdown("---")
+        st.markdown(r'''
+        <div style="font-size: 11px; color: #7f8c8d; line-height: 1.4;">
+        📚 <strong>本分頁對應之核心參考文獻 (Key References):</strong><br>
+        1. <strong>Sinha P, Delucchi KL, McAuley DF, O'Kane CM, Matthay MA, Calfee CS.</strong> <em>Development and validation of parsimonious algorithms to classify acute respiratory distress syndrome phenotypes: a secondary analysis of randomised controlled trials.</em> <strong>Lancet Respir Med.</strong> 2020;8(3):247-257. DOI: <a href="https://doi.org/10.1016/S2213-2600(19)30369-8" target="_blank">10.1016/S2213-2600(19)30369-8</a><br>
+        2. <strong>Calfee CS, Delucchi K, Parsons PE, et al.</strong> <em>Subphenotypes in acute respiratory distress syndrome: latent class analysis of data from two randomised controlled trials.</em> <strong>Lancet Respir Med.</strong> 2014;2(8):611-620.
+        </div>
+        ''', unsafe_allow_html=True)
+
+
     # ---------------------------------------------------------
     # TAB 2: Mechanics, Efficiency, PBW Target Grid - MOVED TO TAB 2
     # ---------------------------------------------------------
@@ -590,6 +601,19 @@ def run_streamlit():
         """, unsafe_allow_html=True)
 
 
+    
+        st.markdown("---")
+        st.markdown(r'''
+        <div style="font-size: 11px; color: #7f8c8d; line-height: 1.4;">
+        📚 <strong>本分頁對應之核心參考文獻 (Key References):</strong><br>
+        1. <strong>Sinha P, Calfee CS, Beitler JR, Soni N, Ho K, Matthay MA, Kallet RH.</strong> <em>Physiologic Analysis and Clinical Performance of the Ventilatory Ratio in Acute Respiratory Distress Syndrome.</em> <strong>Am J Respir Crit Care Med.</strong> 2019;199(3):333-341. DOI: <a href="https://doi.org/10.1164/rccm.201804-0692OC" target="_blank">10.1164/rccm.201804-0692OC</a><br>
+        2. <strong>Nuckton TJ, Alonso JA, Kallet RH, Daniel BM, Pittet JF, Eisner MD, Matthay MA.</strong> <em>Pulmonary Dead-Space Fraction as a Risk Factor for Death in the Acute Respiratory Distress Syndrome.</em> <strong>N Engl J Med.</strong> 2002;346(17):1281-1286. DOI: <a href="https://doi.org/10.1056/NEJMoa012835" target="_blank">10.1056/NEJMoa012835</a><br>
+        3. <strong>Costa ELV, Slutsky AS, Brochard LJ, et al.</strong> <em>Ventilatory Variables and Mechanical Power in Patients with Acute Respiratory Distress Syndrome.</em> <strong>Am J Respir Crit Care Med.</strong> 2021;204(3):303-311.<br>
+        4. <strong>Chen L, Del Sorbo L, Grieco DL, et al.</strong> <em>Airway Closure in Acute Respiratory Distress Syndrome: An Underestimated and Misinterpreted Phenomenon.</em> <strong>Am J Respir Crit Care Med.</strong> 2018;197(1):132-136.
+        </div>
+        ''', unsafe_allow_html=True)
+
+
     # ---------------------------------------------------------
     # TAB 3: Lung Recruitability (R/I Ratio) - MOVED TO TAB 3
     # ---------------------------------------------------------
@@ -706,6 +730,17 @@ def run_streamlit():
             """, unsafe_allow_html=True)
 
 
+    
+        st.markdown("---")
+        st.markdown(r'''
+        <div style="font-size: 11px; color: #7f8c8d; line-height: 1.4;">
+        📚 <strong>本分頁對應之核心參考文獻 (Key References):</strong><br>
+        1. <strong>Chen L, Del Sorbo L, Grieco DL, Junhasavasdikul D, Rittayamai N, Soliman I, Sklar MC, Rauseo M, Ferguson ND, Fan E, Richard JC, Brochard L.</strong> <em>Potential for Lung Recruitment Estimated by the Recruitment-to-Inflation Ratio in Acute Respiratory Distress Syndrome: A Clinical Trial.</em> <strong>Am J Respir Crit Care Med.</strong> 2020;201(2):178-187. DOI: <a href="https://doi.org/10.1164/rccm.201902-0334OC" target="_blank">10.1164/rccm.201902-0334OC</a><br>
+        2. <strong>Wongtirawit N, Menga LS, Brito R, Docci M, Plens GM, et al., Brochard L.</strong> <em>ARDS management beyond the guidelines: a practical physiology-based approach to individualized care.</em> <strong>Intensive Care Med.</strong> 2026. DOI: <a href="https://doi.org/10.1007/s00134-026-08563-7" target="_blank">10.1007/s00134-026-08563-7</a>
+        </div>
+        ''', unsafe_allow_html=True)
+
+
     # ---------------------------------------------------------
     # TAB 4: Spontaneous Breathing Drive & Effort - MOVED TO TAB 4
     # ---------------------------------------------------------
@@ -803,6 +838,18 @@ def run_streamlit():
                 </p>
             </div>
             """, unsafe_allow_html=True)
+
+    
+        st.markdown("---")
+        st.markdown(r'''
+        <div style="font-size: 11px; color: #7f8c8d; line-height: 1.4;">
+        📚 <strong>本分頁對應之核心參考文獻 (Key References):</strong><br>
+        1. <strong>Telias I, Junhasavasdikul D, Rittayamai N, Piquilloud L, Chen L, et al., Brochard L.</strong> <em>Airway Occlusion Pressure as an Estimate of Respiratory Drive and Inspiratory Effort during Assisted Ventilation.</em> <strong>Am J Respir Crit Care Med.</strong> 2020;201(9):1086-1098. DOI: <a href="https://doi.org/10.1164/rccm.201907-1425OC" target="_blank">10.1164/rccm.201907-1425OC</a><br>
+        2. <strong>Bertoni M, Telias I, Urner M, Long M, Del Sorbo L, Fan E, Brodie D, Slutsky AS, Ferguson ND, Brochard L, Goligher EC.</strong> <em>A novel non-invasive method to detect excessively high respiratory effort and dynamic transpulmonary driving pressure during mechanical ventilation.</em> <strong>Crit Care.</strong> 2019;23(1):346. DOI: <a href="https://doi.org/10.1186/s13054-019-2617-0" target="_blank">10.1186/s13054-019-2617-0</a><br>
+        3. <strong>Wongtirawit N, Menga LS, Brito R, et al., Brochard L.</strong> <em>ARDS management beyond the guidelines: a practical physiology-based approach to individualized care.</em> <strong>Intensive Care Med.</strong> 2026. DOI: <a href="https://doi.org/10.1007/s00134-026-08563-7" target="_blank">10.1007/s00134-026-08563-7</a>
+        </div>
+        ''', unsafe_allow_html=True)
+
 
     st.markdown("---")
     st.caption("聲明：本工具僅供臨床醫學學術討論與生理機制模擬使用，實際呼吸器設定與病人處置應由專科醫師依病患臨床即時狀態做出決定。")
