@@ -729,7 +729,6 @@ def run_streamlit():
                * **通氣強度 (Ventilation Intensity)**：若需調高呼吸速率以排除 $CO_2$，應評估 $4 \times \Delta P + RR$；$\Delta P$ 增加 $1 \text{ cmH}_2\text{O}$ 對肺損傷的負擔相當於呼吸速率增加 $4 \text{ bpm}$。
             """, unsafe_allow_html=True)
 
-            st.markdown("##### 🗺️ Wongtirawit 2026 Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖")
             
             # Insert image check for flowchart
             if os.path.exists("202608ICM_ET_flowchart.png"):
@@ -1219,8 +1218,6 @@ def run_streamlit():
             3. **高 PEEP 真正復張(救回)的肺泡容積**: $V_{\text{recruited}} = \Delta EELV - V_{\text{predicted}}$
             4. **床邊最終計算公式**:
                $$\text{R/I Ratio} = \frac{V_{\text{recruited}}}{(PEEP_{\text{high}} - PEEP_{\text{low}}) \times C_{\text{low}}}$$
-
-            *(當比值 $\ge 0.5$ 時，代表高 PEEP 救回之肺泡順應性已達原本開放肺泡順應性的 50% 以上，定義為高可復張性 High Recruiter)*。
             """, unsafe_allow_html=True)
 
             # Display RI ratio.png image below item 4 formula
@@ -1234,6 +1231,10 @@ def run_streamlit():
                 if not os.path.exists("ri_ratio_diagram.png"):
                     generate_ri_ratio_png("ri_ratio_diagram.png")
                 st.image("ri_ratio_diagram.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+
+            st.markdown(r"""
+            *(當比值 $\ge 0.5$ 時，代表高 PEEP 救回之肺泡順應性已達原本開放肺泡順應性的 50% 以上，定義為高可復張性 High Recruiter)*。
+            """, unsafe_allow_html=True)
 
         # Collapsible Bedside Operation Guide (No Image)
         with st.expander("📋 點此展開／折疊查看 R/I Ratio 床邊詳細操作步驟 (Step-by-Step Guide)", expanded=False):
