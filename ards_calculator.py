@@ -746,21 +746,22 @@ def run_streamlit():
             2. **高驅動壓 ($\Delta P$) 床邊鑑別與排除**：
                * **排除氣道關閉 (Airway Closure)**：測量氣道開啟壓 ($AOP$)，若 $PEEP < AOP$，真正的驅動壓為 $P_{\text{plat}} - AOP$。
                * **排除肺過度膨脹 (Overdistension / Hyperinflation)**：
-                 
-                 ##### 🗺️ Wongtirawit 2026 Fig 3C/D: Stress Index 與床邊胸部輕壓測試波形示意圖
+            """, unsafe_allow_html=True)
+            
+            # Display Stress Index & Chest Compression image in Tab 0
+            if os.path.exists("stressindex_chestcompress.png"):
+                st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+            elif os.path.exists("/workspace/stressindex_chestcompress.png"):
+                st.image("/workspace/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+            elif os.path.exists("/workspace/artifacts/stressindex_chestcompress.png"):
+                st.image("/workspace/artifacts/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+            else:
+                if not os.path.exists("stressindex_chestcompress.png"):
+                    generate_stressindex_chestcompress_png("stressindex_chestcompress.png")
+                st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
 
-                 if os.path.exists("stressindex_chestcompress.png"):
-                     st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
-                 elif os.path.exists("/workspace/stressindex_chestcompress.png"):
-                     st.image("/workspace/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
-                 elif os.path.exists("/workspace/artifacts/stressindex_chestcompress.png"):
-                     st.image("/workspace/artifacts/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
-                 else:
-                     if not os.path.exists("stressindex_chestcompress.png"):
-                         generate_stressindex_chestcompress_png("stressindex_chestcompress.png")
-                     st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
-
-                 * **方法 A：Stress Index (SI, 壓力指數)**  
+            st.markdown(r"""
+               * **方法 A：Stress Index (SI, 壓力指數)**  
                    在 VCV (方波/恒定流速) 模式下，觀察吸氣過程中氣道壓–時間 ($P\text{-}t$) 曲線之幾何形狀（$P = a \cdot t^b + c$）：  
                    - **$SI < 1.0$ (向下凹陷, Concave)**：代表隨吸氣容積增加，肺部順應性改善，存在潮氣復張 (Tidal Recruitment)，建議適度調高 PEEP。  
                    - **$SI = 1.0$ (呈直線, Linear)**：代表吸氣過程中肺順應性維持恆定，為最佳肺保護通氣區間。  
