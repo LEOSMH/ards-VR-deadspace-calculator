@@ -119,6 +119,94 @@ def calculate_ancillary_il8_sTNFR1_4var_prob(il8, stnfr1, bicarbonate, vasopress
 # ---------------------------------------------------------
 # Streamlit App Mode
 # ---------------------------------------------------------
+
+# ---------------------------------------------------------
+# Auto-generate Waveform Image for Tab 4 if Missing
+# ---------------------------------------------------------
+def ensure_waveform_image():
+    import os
+    import matplotlib.pyplot as plt
+    import numpy as np
+    
+    img_path = "fig5_waveforms.png"
+    if os.path.exists(img_path) or os.path.exists(os.path.join("/workspace", img_path)):
+        return
+        
+    try:
+        plt.style.use('seaborn-v0_8-whitegrid' if 'seaborn-v0_8-whitegrid' in plt.style.available else 'default')
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5), dpi=150)
+
+        # PANEL 1: P0.1 & Delta Pocc
+        t1 = np.linspace(0, 3, 300)
+        peep = 10
+        paw1 = np.ones_like(t1) * peep
+        for i, t in enumerate(t1):
+            if 0.8 <= t < 1.3:
+                paw1[i] = peep - 12 * np.sin((t - 0.8) / 0.5 * np.pi / 2)
+            elif 1.3 <= t < 1.8:
+                paw1[i] = (peep - 12) + 12 * np.sin((t - 1.3) / 0.5 * np.pi / 2)
+            elif t >= 1.8:
+                paw1[i] = peep + 8 * np.sin((t - 1.8) / 1.2 * np.pi)
+
+        ax1.plot(t1, paw1, color='#2980b9', lw=2.5, label='Paw (Airway Pressure)')
+        ax1.axhline(peep, color='#7f8c8d', linestyle='--', alpha=0.7)
+        y_p01 = peep - 12 * np.sin((0.9 - 0.8) / 0.5 * np.pi / 2)
+        ax1.plot([0.8, 0.9], [peep, y_p01], color='#e74c3c', lw=3)
+        ax1.scatter([0.9], [y_p01], color='#e74c3c', s=50, zorder=5)
+        ax1.annotate('P0.1 (first 100 ms)\nΔP = 3.7 cmH$_2$O', xy=(0.9, y_p01), xytext=(1.05, y_p01 + 2.5),
+                     arrowprops=dict(arrowstyle='->', color='#e74c3c', lw=1.5),
+                     fontsize=10, fontweight='bold', color='#c0392b',
+                     bbox=dict(boxstyle='round,pad=0.4', facecolor='#fadbd8', edgecolor='#e74c3c', alpha=0.9))
+
+        y_trough = peep - 12
+        ax1.annotate('', xy=(1.3, peep), xytext=(1.3, y_trough),
+                     arrowprops=dict(arrowstyle='<->', color='#8e44ad', lw=2.5))
+        ax1.text(1.38, (peep + y_trough)/2, 'ΔPocc = -12 cmH$_2$O\n(Total occluded effort)', 
+                 fontsize=10, fontweight='bold', color='#8e44ad', va='center',
+                 bbox=dict(boxstyle='round,pad=0.4', facecolor='#f4ecf7', edgecolor='#8e44ad', alpha=0.9))
+
+        ax1.set_title('A. End-Expiratory Occlusion (P0.1 & ΔPocc)', fontsize=12, fontweight='bold', color='#2c3e50')
+        ax1.set_xlabel('Time (seconds)', fontsize=11)
+        ax1.set_ylabel('Airway Pressure Paw (cmH$_2$O)', fontsize=11)
+        ax1.set_ylim(-5, 23)
+        ax1.grid(True, linestyle=':', alpha=0.6)
+
+        # PANEL 2: PMI
+        t2 = np.linspace(0, 3, 300)
+        paw2 = np.ones_like(t2) * peep
+        p_peak = 18
+        p_plat = 22
+        for i, t in enumerate(t2):
+            if 0.3 <= t < 1.0:
+                paw2[i] = peep + (p_peak - peep) * np.sin((t - 0.3) / 0.7 * np.pi / 2)
+            elif 1.0 <= t < 2.2:
+                paw2[i] = p_plat
+            elif t >= 2.2:
+                paw2[i] = peep + (p_plat - peep) * np.exp(-(t - 2.2) * 5)
+
+        ax2.plot(t2, paw2, color='#27ae60', lw=2.5, label='Paw (Airway Pressure)')
+        ax2.axhline(peep, color='#7f8c8d', linestyle='--', alpha=0.7)
+        ax2.axhline(p_peak, color='#e67e22', linestyle=':', alpha=0.8, label=f'Ppeak = {p_peak} cmH$_2$O')
+        ax2.axhline(p_plat, color='#c0392b', linestyle=':', alpha=0.8, label=f'Pplat = {p_plat} cmH$_2$O')
+
+        ax2.annotate('', xy=(1.6, p_plat), xytext=(1.6, p_peak),
+                     arrowprops=dict(arrowstyle='<->', color='#d35400', lw=2.5))
+        ax2.text(1.68, (p_plat + p_peak)/2, f'PMI = Pplat - Ppeak\n= {p_plat - p_peak} cmH$_2$O\n(Muscle relaxation)', 
+                 fontsize=10, fontweight='bold', color='#d35400', va='center',
+                 bbox=dict(boxstyle='round,pad=0.4', facecolor='#fdebd0', edgecolor='#e67e22', alpha=0.9))
+
+        ax2.set_title('B. End-Inspiratory Occlusion in PSV (PMI = Pplat - Ppeak)', fontsize=12, fontweight='bold', color='#2c3e50')
+        ax2.set_xlabel('Time (seconds)', fontsize=11)
+        ax2.set_ylabel('Airway Pressure Paw (cmH$_2$O)', fontsize=11)
+        ax2.set_ylim(5, 26)
+        ax2.grid(True, linestyle=':', alpha=0.6)
+
+        plt.tight_layout()
+        plt.savefig(img_path, dpi=150, bbox_inches='tight')
+        plt.close()
+    except Exception as e:
+        pass
+
 def run_streamlit():
     import streamlit as st
     
