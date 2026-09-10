@@ -219,20 +219,11 @@ def run_streamlit():
         2. **低血氧判定標準雙軌並行**：
            - 在血氧飽和度 $SpO_2 \le 97\%$ 的前提下，允許以 **$SpO_2/FiO_2 \le 315$** 代替傳統動脈血氣的 $PaO_2/FiO_2 \le 300$。
         3. **影像學標準升級**：
-           - 保留雙側肺部浸潤影 (Bilateral opacities) 診斷（須排除單純胸水、全肺塌陷或結節腫瘤）。
+           - 保留雙側肺部浸潤影 (bilateral opacities) 診斷。
            - **新增肺部超音波 (Lung Ultrasound)** 作為可接受的影像診斷工具，極佳適用於不便搬動病患或資源有限環境。
         4. **資源有限地區的簡化條件**：
            - 在這類環境下，取消對 PEEP、特定氧氣流速或特定呼吸器設備的強制要求，降低床邊診斷門檻。
         """, unsafe_allow_html=True)
-
-        st.info(r'''
-💡 **經典回顧：2012 年柏林定義 (Berlin Definition) 四大核心診斷標準與影像學排除條款**：
-
-1. **發病時間 (Timing)**：在已知臨床誘因發生後 **1 週內**出現新發或惡化的呼吸道症狀。
-2. **胸部影像學 (Chest Imaging)**：胸部 X 光 (CXR) 或 CT 呈現雙側肺浸潤影 (Bilateral opacities)，且**「不能完全用胸水 (Pleural effusions)、肺葉/全肺塌陷 (Lobar/lung collapse) 或肺結節/腫瘤 (Nodules) 來解釋」**。
-3. **肺水腫來源 (Origin of Edema)**：呼吸衰竭**不能完全歸因於心臟衰竭或體液過負荷 (Fluid overload)**。無明確危險因子（如肺炎、敗血症、誤吸等）時，須經客觀評估（如心臟超音波）排除心因性水腫。
-4. **缺氧受損程度 (Oxygenation)**：在 $\text{PEEP} \ge 5\text{ cmH}_2\text{O}$ 條件下，分為輕度 ($200 < PaO_2/FiO_2 \le 300$)、中度 ($100 < PaO_2/FiO_2 \le 200$)、重度 ($PaO_2/FiO_2 \le 100$)。
-''')
         
         # Try to show image
         import os
@@ -275,6 +266,48 @@ def run_streamlit():
         5. **保守水分管理 (FACCT 策略)**：
            - 休克緩解後採取保守水分限制或利尿策略，追求中性累積水分平衡，能有效減輕肺水腫，顯著縮短 ICU 住院與呼吸器使用天數。
         """, unsafe_allow_html=True)
+
+        st.markdown("---")
+        with st.expander("🩺 點此展開／折疊查看 2026 最新核心文獻之處置重點與生理個人化管理精粹 (ICM 2026)", expanded=False):
+            st.markdown(r"""
+            ### 📘 第一篇：核心醫療處置與指引框架
+            > 📄 **Morris IS, Ferguson ND, et al.** *The medical management of acute respiratory distress syndrome.* **Intensive Care Medicine** (2026) 52:104–117.
+
+            1. **非侵入性呼吸支持 (Non-Invasive Support)**：
+               * **輕度 ARDS**：優先推薦 **高流量鼻導管 (HFNO 40–60 L/min)**，舒適度高且具死腔衝洗效果。
+               * **輕中度 ARDS**：若無休克或多器官衰竭，可試用非侵入正壓通氣（優先推薦 **頭盔式 Helmet NIV**），能降低插管率；須於 **1–2 小時內評估**，無顯著改善應果斷插管。
+            2. **侵入性保護通氣黃金指標 (Invasive Mechanical Ventilation)**：
+               * **潮氣容積 ($V_t$)**：鎖定 **6 mL/kg PBW**（範圍 4–8）。若 $\Delta P \ge 16 \text{ cmH}_2\text{O}$ 或有右心衰竭風險，可降至 4–6 mL/kg。
+               * **平台壓 ($P_{\text{plat}}$)**：控制在 **$P_{\text{plat}} < 30 \text{ cmH}_2\text{O}$**；若有高腹壓/肥胖等高胸壁彈抗，可放寬至 30–35；若併發右心功能不全，應嚴格限制在 **$< 26\text{–}28 \text{ cmH}_2\text{O}$**。
+               * **靜態驅動壓 ($\Delta P$)**：建議控制在 **$< 14\text{–}16 \text{ cmH}_2\text{O}$**（$\Delta P = P_{\text{plat}} - PEEP_{\text{total}}$），是比 $V_t$ 更強烈的死亡預後因子。
+               * **氣體交換目標**：維持 $SpO_2 \text{ 90–95\%}$（$PaO_2 \text{ 60–80 mmHg}$），允許適度二氧化碳滯留（Permissive Hypercapnia），但須維持 $pH > 7.25$。
+            3. **輔助性醫療處置 (Non-Ventilatory Management)**：
+               * **早期俯臥通氣 (Prone Positioning)**：中重度 ARDS ($PaO_2/FiO_2 < 150 \text{ mmHg}$) 建議於 **36 小時內啟動，每天 $\ge 16$ 小時**，能使 28 天死亡率減半。
+               * **保守水分管理 (FACCT Strategy)**：休克緩解後追求 **中性累積水分平衡**（不盲目輸液），可增加無呼吸器天數。
+               * **神經肌肉阻斷劑 (NMBA)**：不建議常規全給；僅適用於早期重度缺氧 ($P/F \le 100$)、嚴重人機不同步或高呼吸驅力者，建議 **48 小時內及時停用**。
+               * **類固醇 (Steroids)**：特定病因（如 COVID-19、severe CAP）有明確效益；若無禁忌症，早期低劑量 Dexamethasone/Methylprednisolone 漸進減量可增加無呼吸器天數。
+
+            ---
+
+            ### 📙 第二篇：超越指引之床邊生理個人化調校
+            > 📄 **Wongtirawit N, Brochard L, et al.** *ARDS management beyond the guidelines: a practical physiology-based approach to individualized care.* **Intensive Care Medicine** (2026).
+
+            1. **插管後第一小時 VCV 穩定流程 (First-Hour Roadmap)**：
+               * **模式首選**：被動通氣下首選 **容積控制通氣 (VCV)**，方便持續量測 $P_{\text{plat}}$ 與 $\Delta P$。
+               * **通氣強度 (Ventilation Intensity)**：若需調高呼吸速率以排除 $CO_2$，應評估 $4 \times \Delta P + RR$；$\Delta P$ 增加 $1 \text{ cmH}_2\text{O}$ 對肺損傷的負擔相當於呼吸速率增加 $4 \text{ bpm}$。
+            2. **高驅動壓 ($\Delta P$) 床邊鑑別與排除**：
+               * **排除氣道關閉 (Airway Closure)**：測量氣道開啟壓 ($AOP$)，若 $PEEP < AOP$，真正的驅動壓為 $P_{\text{plat}} - AOP$。
+               * **排除肺過度膨脹 (Overdistension)**：觀察 VCV 下 Paw 波形向上彎曲（Stress Index $> 1$），或執行 **床邊胸部輕壓測試 (Chest Compression Test)**——若輕壓胸部反而使 $P_{\text{plat}}$ 「悖論性下降」，提示肺過度膨脹，應調低 PEEP。
+            3. **右心室 (RV) 肺血管後負荷保護**：
+               * 20–25% 患者會併發急性肺心症 (ACP)。PEEP 過低（肺塌陷）與過高（肺過度膨脹）都會增加肺血管阻力 (PVR)。高危患者應早期做心臟超音波，嚴格限制 $P_{\text{plat}} < 26\text{–}28 \text{ cmH}_2\text{O}$。
+            4. **自主呼吸驅力監測與防範 PSILI**：
+               * 過度強烈的自主吸氣會引發 **病患自殘性肺損傷 (PSILI)** 與 Occult Pendelluft（肺內氣體震盪）。
+               * 應監測 **$P0.1 < 3.5 \text{ cmH}_2\text{O}$**、**$\Delta P_{occ} \ge -20 \text{ cmH}_2\text{O}$** 及 **$PMI (P_{\text{plat}} - P_{\text{peak}}) \le 3.0 \text{ cmH}_2\text{O}$**。若超標應優先調整流速/支持壓或調高 PEEP，無效再加深鎮靜。
+            5. **特殊情境個人化處置**：
+               * **病態性肥胖 (Obesity)**：高胸壁重量導致胸膜壓升高。應評估 $AOP$，可利用食道壓導管（Esophageal Manometry）滴定 PEEP，鎖定 **呼氣末跨肺壓 $TPP \approx 0 \pm 2 \text{ cmH}_2\text{O}$**（此時 PEEP 設至 $20 \text{ cmH}_2\text{O}$ 亦安全）。
+               * **ECMO 體外膜氧合**：採超保護肺通氣 ($V_t < 4 \text{ mL/kg}$，$\Delta P$ 極低)，適度維持 PEEP (10–15) 防範全肺塌陷，並透過調整掃氣流速（Sweep gas）控制患者呼吸驅力。
+            """, unsafe_allow_html=True)
+
 
         st.markdown("---")
         st.markdown(r"""
@@ -762,6 +795,41 @@ def run_streamlit():
         本工具引進了 Wongtirawit 2026 (ICM) 推薦的床邊無創遮斷指標，防範 PSILI。\n
         """)
         
+
+        # Collapsible Measurement Guide for Spontaneous Drive & Effort
+        with st.expander("🛠️ 點此展開／折疊查看 P0.1、ΔPocc、Ppeak/Pplat (PMI) 床邊詳細量測步驟與生理學原理", expanded=False):
+            st.markdown(r"""
+            #### 1. P0.1 (氣道百毫秒遮斷壓 / Airway Occlusion Pressure at 0.1s)
+            * **床邊量測步驟**：
+              在患者有自主呼吸努力（如 PSV 模式）且波形穩定時，直接於呼吸器選單按下 **P0.1 測量功能**（或由現代呼吸器自動連續監測）。呼吸器會在患者自發吸氣觸發的最初 **100 毫秒 (0.1 秒)** 內瞬間閉鎖氣道，測量這 0.1 秒內的氣道壓力下降幅度。
+            * **生理學原理**：
+              因為 100 ms 的遮斷時間極短，神經與化學反饋來不及改變肌肉出力，因此 P0.1 能獨立反映**大腦中樞呼吸驅力 (Respiratory Drive)**，完全不受肺部阻力與順應性改變的干擾。
+            * **臨床安全標準**：
+              正常人或合適通氣支持下約為 **$1.5 \text{–} 3.5 \text{ cmH}_2\text{O}$**；若 **$\ge 3.5 \text{–} 4.0 \text{ cmH}_2\text{O}$** 提示驅力過高、通氣竭力。
+
+            ---
+
+            #### 2. $\Delta P_{occ}$ (呼氣末遮斷努力壓差 / End-Expiratory Occlusion Pressure)
+            * **床邊量測步驟**：
+              在自主輔助通氣下，於患者呼氣末按下呼吸器的 **呼氣遮斷 (End-Expiratory Hold / Occlusion，維持約 1–2 秒)**。當患者在氣道封閉下嘗試進行單次吸氣時，氣道壓會產生一個向下的負壓波谷，記錄該波谷的最深壓力降（例如 $-12 \text{ cmH}_2\text{O}$ 或 $-25 \text{ cmH}_2\text{O}$）。
+            * **生理學原理**：
+              $\Delta P_{occ}$ 反映了患者吸氣肌全力收縮時產生的最大壓力（$P_{\text{mus}} \approx -0.75 \times \Delta P_{occ}$），可用於無創估算**動態跨肺驅動壓 ($\Delta P_{L,\text{dyn}}$)**。
+            * **臨床安全標準**：
+              安全區為 **$\ge -20 \text{ cmH}_2\text{O}$**（如 $-10 \text{ 到 } -15 \text{ cmH}_2\text{O}$）；若 **$< -20 \text{ cmH}_2\text{O}$**（如 $-25 \text{ cmH}_2\text{O}$），提示橫膈拉扯過度，有極高風險引發 **病患自殘性肺損傷 (PSILI)** 及 Occult Pendelluft（肺內氣體異常震盪）。
+
+            ---
+
+            #### 3. 自主通氣下 $P_{\text{peak}}$ 與 $P_{\text{plat}}$ / PMI (肌肉壓力指數)
+            * **床邊量測步驟**：
+              * **$P_{\text{peak}}$ (峰值壓)**：在 PSV 模式下，於病患吸氣過程中、按下 $i\_hold$ 之前，直接讀取呼吸器顯示之最高氣道壓。
+              * **$P_{\text{plat}}$ (平台壓)**：於病患吸氣即將結束的瞬間，短暫按下 **吸氣遮斷 (Inspiratory Hold / i hold，約 0.2–0.3 秒)**。
+            * **生理學原理 (PMI 計算)**：
+              在 PSV 下當氣流因 $i\_hold$ 停止時，原本用力的吸氣肌放鬆（Relaxation），胸廓彈性回縮力會使氣道壓由 $P_{\text{peak}}$ **向上跳升** 至平台值 $P_{\text{plat}}$。計算 **$\text{PMI} = P_{\text{plat}} - P_{\text{peak}}$**。
+            * **臨床安全標準**：
+              若 **$\text{PMI} > 3.0 \text{ cmH}_2\text{O}$**，代表吸氣肌放鬆前替肺部額外增加了過大的做功與高剪力，應調整通氣支持壓或流速以減輕肌肉負擔。
+            """, unsafe_allow_html=True)
+
+
         # Present safe vs unsafe clinical ranges for assisted ventilation (as requested by user)
         st.subheader("📊 自主輔助通氣下床邊生理指標安全區間 (Spontaneous Effort Safety Ranges)")
         st.markdown(r"""
