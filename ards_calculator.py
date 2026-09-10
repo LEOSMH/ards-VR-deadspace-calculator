@@ -240,7 +240,7 @@ def ensure_fig5_exists():
                          arrowprops=dict(arrowstyle='->', color='#e74c3c', lw=1.8),
                          fontsize=9, fontweight='bold', color='#e74c3c')
             ax1.plot([3.2, 3.3], [8.0, 5.5], color='#e74c3c', lw=3)
-            ax1.annotate(r'Delta Pocc (Target >= -20 cmH2O)', 
+            ax1.annotate('Delta Pocc (Max Occluded Drop)\ne.g. -18 cmH2O (High Effort Risk)', 
                          xy=(4.0, -10.0), xytext=(3.5, -13.5),
                          arrowprops=dict(arrowstyle='->', color='#8e44ad', lw=1.8),
                          fontsize=8.5, fontweight='bold', color='#8e44ad')
@@ -266,7 +266,7 @@ def ensure_fig5_exists():
             ax2.text(0.5, 22.5, 'Pplat = 22 (via i hold)', fontsize=9, color='#27ae60', fontweight='bold')
             ax2.annotate('', xy=(3.8, 22), xytext=(3.8, 18),
                          arrowprops=dict(arrowstyle='<->', color='#c0392b', lw=2))
-            ax2.text(4.0, 19.5, r'PMI = Pplat - Ppeak = +4.0 cmH2O (>3: High Effort)', 
+            ax2.text(4.0, 19.5, 'PMI = Pplat - Ppeak\ne.g. +4.0 cmH2O (>3: High Effort)', 
                      fontsize=8.5, fontweight='bold', color='#c0392b')
 
             plt.tight_layout()
@@ -580,7 +580,21 @@ def run_streamlit():
 
             ### 📙 第二篇：超越指引之床邊生理個人化調校
             > 📄 **Wongtirawit N, Brochard L, et al.** *ARDS management beyond the guidelines: a practical physiology-based approach to individualized care.* **Intensive Care Medicine** (2026).
+            """, unsafe_allow_html=True)
 
+            # Insert image check for flowchart
+            if os.path.exists("202608ICM_ET_flowchart.png"):
+                st.image("202608ICM_ET_flowchart.png", caption="Wongtirawit 2026 (ICM) Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖", use_container_width=True)
+            elif os.path.exists("/workspace/202608ICM_ET_flowchart.png"):
+                st.image("/workspace/202608ICM_ET_flowchart.png", caption="Wongtirawit 2026 (ICM) Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖", use_container_width=True)
+            elif os.path.exists("202608ICM_ET_flowchart.jpg"):
+                st.image("202608ICM_ET_flowchart.jpg", caption="Wongtirawit 2026 (ICM) Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖", use_container_width=True)
+            else:
+                if not os.path.exists("first_hour_roadmap.png"):
+                    generate_first_hour_roadmap_png("first_hour_roadmap.png")
+                st.image("first_hour_roadmap.png", caption="Wongtirawit 2026 (ICM) Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖", use_container_width=True)
+
+            st.markdown(r"""
             1. **插管後第一小時 VCV 穩定流程 (First-Hour Roadmap)**：
                * **模式首選**：被動通氣下首選 **容積控制通氣 (VCV)**，方便持續量測 $P_{\text{plat}}$ 與 $\Delta P$。
                * **通氣強度 (Ventilation Intensity)**：若需調高呼吸速率以排除 $CO_2$，應評估 $4 \times \Delta P + RR$；$\Delta P$ 增加 $1 \text{ cmH}_2\text{O}$ 對肺損傷的負擔相當於呼吸速率增加 $4 \text{ bpm}$。
@@ -956,53 +970,53 @@ def run_streamlit():
         使用 **R/I Ratio 呼氣單步降壓法**，可以幫助醫師在床邊 10 秒內區分出病患屬於 **「高復張性」** 還是 **「低復張性」** 亞型，避免造成嚴重肺部過度充氣與右心後負荷增加。\n
         """)
         
-        # Display mathematical formulas for R/I Ratio as requested by user
-        st.subheader("📐 R/I Ratio 核心計算生理公式")
-        st.markdown(r"""
-        1. **低 PEEP 靜態順應性**: 
-           $$C_{\text{low}} = \frac{Vt_{\text{low}}}{P_{\text{plat,low}} - PEEP_{\text{low}}}$$
-        2. **單步降壓之總呼氣末肺容積變化量**: 
-           $$\Delta EELV = V_{\text{exp,total}} - Vt_{\text{high}}$$
-        3. **預期未復張之充氣肺泡容積**: 
-           $$V_{\text{predicted}} = C_{\text{low}} \times (PEEP_{\text{high}} - PEEP_{\text{low}})$$
-        4. **高 PEEP 真正復張(救回)的肺泡容積**: 
-           $$V_{\text{recruited}} = \Delta EELV - V_{\text{predicted}}$$
-        5. **最終 R/I Ratio 比值**: 
-           $$R/I \text{ Ratio} = \frac{V_{\text{recruited}}}{(PEEP_{\text{high}} - PEEP_{\text{low}}) \times C_{\text{low}}}$$
-        """, unsafe_allow_html=True)
+        # Collapsible Math Formulas for R/I Ratio
+        with st.expander("📐 點此展開／折疊查看 R/I Ratio 核心計算生理公式", expanded=False):
+            st.markdown(r"""
+            1. **低 PEEP 靜態順應性**: 
+               $$C_{\text{low}} = \frac{Vt_{\text{low}}}{P_{\text{plat,low}} - PEEP_{\text{low}}}$$
+            2. **單步降壓之總呼氣末肺容積變化量**: 
+               $$\Delta EELV = V_{\text{exp,total}} - Vt_{\text{high}}$$
+            3. **預期未復張之充氣肺泡容積**: 
+               $$V_{\text{predicted}} = C_{\text{low}} \times (PEEP_{\text{high}} - PEEP_{\text{low}})$$
+            4. **高 PEEP 真正復張(救回)的肺泡容積**: 
+               $$V_{\text{recruited}} = \Delta EELV - V_{\text{predicted}}$$
+            5. **最終 R/I Ratio 比值**: 
+               $$R/I \text{ Ratio} = \frac{V_{\text{recruited}}}{(PEEP_{\text{high}} - PEEP_{\text{low}}) \times C_{\text{low}}}$$
+            """, unsafe_allow_html=True)
 
-        st.subheader("📋 R/I Ratio 床邊詳細操作步驟 (Step-by-Step Bedside Guide)")
+        # Collapsible Bedside Operation Guide & Diagram
+        with st.expander("📋 點此展開／折疊查看 R/I Ratio 床邊詳細操作步驟 (Step-by-Step Guide) 與波形拆解圖", expanded=False):
+            # Display RI ratio.png image inside expander
+            if os.path.exists("RI ratio.png"):
+                st.image("RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+            elif os.path.exists("/workspace/RI ratio.png"):
+                st.image("/workspace/RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+            elif os.path.exists("RI_ratio.png"):
+                st.image("RI_ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+            else:
+                if not os.path.exists("ri_ratio_diagram.png"):
+                    generate_ri_ratio_png("ri_ratio_diagram.png")
+                st.image("ri_ratio_diagram.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
 
-        # Display RI ratio.png image in Tab 3
-        if os.path.exists("RI ratio.png"):
-            st.image("RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-        elif os.path.exists("/workspace/RI ratio.png"):
-            st.image("/workspace/RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-        elif os.path.exists("RI_ratio.png"):
-            st.image("RI_ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-        else:
-            if not os.path.exists("ri_ratio_diagram.png"):
-                generate_ri_ratio_png("ri_ratio_diagram.png")
-            st.image("ri_ratio_diagram.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-
-        st.markdown(r"""
-        <div style="background-color: #f0f7fc; padding: 18px; border-radius: 8px; border-left: 5px solid #2980b9; margin-bottom: 20px;">
-            <p style="margin-top:0; font-size:15px; font-weight:600; color:#2980b9;">🛠️ 呼氣單步降壓法 (One-Breath PEEP Reduction) 執行步驟：</p>
-            <ol style="margin-bottom:8px; font-size:13px; line-height:1.6; color:#2c3e50; padding-left:20px;">
-                <li><strong>高壓穩定階段 (PEEPhigh Stabilization)</strong>：將病患呼吸器之 PEEP 設為高水平 (通常設定為 <b>15 cmH₂O</b>)，並穩定通氣 <b>10 分鐘</b>，使肺泡充分復張並達到穩態。</li>
-                <li><strong>防氣體陷縮 & 記錄基準潮氣量</strong>：短暫將呼吸速率 (RR) 調降至 <b>6–8 bpm</b> (進行 1-2 次呼吸)，以完全排除氣道捕獲氣體 (Air trapping / Auto-PEEP)。記錄此時的呼出潮氣容積 <b>Vt_high</b> ($VTe_{\text{high}}$，如 450 mL)。</li>
-                <li><strong>單步突發降壓 (One-Breath Drop)</strong>：在<b>單次吐氣開始時</b>，將 PEEP 瞬間調降至低水平 (通常設定為 <b>5 cmH₂O</b>)。此時病患會因為 sudden drop 而吐出一口極大的氣體。</li>
-                <li><strong>記錄總呼出容積 (V_exp_drop)</strong>：在降壓那一瞬間的單個呼吸週期中，記錄呼吸器面板上測得的<b>總呼出容積</b> (V_exp_total / V_exp_drop，如 1100 mL)。</li>
-                <li><strong>低壓生理力學量測 (PEEPlow Mechanics)</strong>：讓患者在低 PEEP 水平穩定呼吸 2-3 次。短暫按下「吸氣阻斷鍵 (Inspiratory Hold) 0.2-0.3 秒」測量低 PEEP 下的平台壓 <b>Pplat_low</b> 與呼出潮氣 <b>Vt_low</b>。</li>
-                <li><strong>輸入參數計算</strong>：將上述測得之 6 個數值代入下方對應之輸入欄位中，一秒取得您的 R/I Ratio 報告！</li>
-            </ol>
-            <hr style="border-top: 1px solid rgba(41, 128, 185, 0.2); margin: 10px 0;">
-            <p style="margin-bottom:0; font-size:12px; line-height:1.5; color:#2c3e50;">
-                ⚠️ <b>AOP 關鍵提醒 (Airway Opening Pressure)</b>：<br>
-                在執行 R/I 測試前，強烈建議先進行低流速吸氣量測 AOP。如果病患的 <b>AOP 高於 PEEPlow</b> (例如 AOP 為 8 cmH₂O，而您設定之 PEEPlow 為 5 cmH₂O)，<b>您必須使用 AOP 作為 PEEPlow</b> 代替 5 cmH₂O！否則，在降壓時氣道會提前完全關閉，導致順應性與 R/I Ratio 算得嚴重失真。
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+            st.markdown(r"""
+            <div style="background-color: #f0f7fc; padding: 18px; border-radius: 8px; border-left: 5px solid #2980b9; margin-bottom: 20px;">
+                <p style="margin-top:0; font-size:15px; font-weight:600; color:#2980b9;">🛠️ 呼氣單步降壓法 (One-Breath PEEP Reduction) 執行步驟：</p>
+                <ol style="margin-bottom:8px; font-size:13px; line-height:1.6; color:#2c3e50; padding-left:20px;">
+                    <li><strong>高壓穩定階段 (PEEPhigh Stabilization)</strong>：將病患呼吸器之 PEEP 設為高水平 (通常設定為 <b>15 cmH₂O</b>)，並穩定通氣 <b>10 分鐘</b>，使肺泡充分復張並達到穩態。</li>
+                    <li><strong>防氣體陷縮 & 記錄基準潮氣量</strong>：短暫將呼吸速率 (RR) 調降至 <b>6–8 bpm</b> (進行 1-2 次呼吸)，以完全排除氣道捕獲氣體 (Air trapping / Auto-PEEP)。記錄此時的呼出潮氣容積 <b>Vt_high</b> ($VTe_{\text{high}}$，如 450 mL)。</li>
+                    <li><strong>單步突發降壓 (One-Breath Drop)</strong>：在<b>單次吐氣開始時</b>，將 PEEP 瞬間調降至低水平 (通常設定為 <b>5 cmH₂O</b>)。此時病患會因為 sudden drop 而吐出一口極大的氣體。</li>
+                    <li><strong>記錄總呼出容積 (V_exp_drop)</strong>：在降壓那一瞬間的單個呼吸週期中，記錄呼吸器面板上測得的<b>總呼出容積</b> (V_exp_total / V_exp_drop，如 1100 mL)。</li>
+                    <li><strong>低壓生理力學量測 (PEEPlow Mechanics)</strong>：讓患者在低 PEEP 水平穩定呼吸 2-3 次。短暫按下「吸氣阻斷鍵 (Inspiratory Hold) 0.2-0.3 秒」測量低 PEEP 下的平台壓 <b>Pplat_low</b> 與呼出潮氣 <b>Vt_low</b>。</li>
+                    <li><strong>輸入參數計算</strong>：將上述測得之 6 個數值代入下方對應之輸入欄位中，一秒取得您的 R/I Ratio 報告！</li>
+                </ol>
+                <hr style="border-top: 1px solid rgba(41, 128, 185, 0.2); margin: 10px 0;">
+                <p style="margin-bottom:0; font-size:12px; line-height:1.5; color:#2c3e50;">
+                    ⚠️ <b>AOP 關鍵提醒 (Airway Opening Pressure)</b>：<br>
+                    在執行 R/I 測試前，強烈建議先進行低流速吸氣量測 AOP。如果病患的 <b>AOP 高於 PEEPlow</b> (例如 AOP 為 8 cmH₂O，而您設定之 PEEPlow 為 5 cmH₂O)，<b>您必須使用 AOP 作為 PEEPlow</b> 代替 5 cmH₂O！否則，在降壓時氣道會提前完全關閉，導致順應性與 R/I Ratio 算得嚴重失真。
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
 
         col_ri1, col_ri2 = st.columns(2)
         with col_ri1:
