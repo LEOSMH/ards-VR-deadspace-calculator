@@ -266,7 +266,7 @@ def ensure_fig5_exists():
             ax2.text(0.5, 22.5, 'Pplat = 22 (via i hold)', fontsize=9, color='#27ae60', fontweight='bold')
             ax2.annotate('', xy=(3.8, 22), xytext=(3.8, 18),
                          arrowprops=dict(arrowstyle='<->', color='#c0392b', lw=2))
-            ax2.text(4.0, 19.5, 'PMI = Pplat - Ppeak\ne.g. +4.0 cmH2O (>3: High Effort)', 
+            ax2.text(4.0, 19.5, 'PMI = Pplat - Ppeak\n= +4.0 cmH2O (>3: High Effort)', 
                      fontsize=8.5, fontweight='bold', color='#c0392b')
 
             plt.tight_layout()
@@ -333,6 +333,77 @@ def generate_roadmap_png(out_path):
     plt.tight_layout()
     plt.savefig(out_path, dpi=150, bbox_inches='tight')
     plt.close()
+
+def generate_aop_diagram_png(out_path):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.5), dpi=150)
+    fig.patch.set_facecolor('#ffffff')
+
+    # Panel 1: Low-Flow Insufflation Pressure-Time Curve
+    t = np.linspace(0, 5, 500)
+    p = np.zeros_like(t)
+    p_start = 3.0
+    p_aop = 12.0
+    p_peak = 24.0
+
+    mask1 = t <= 1.5
+    p[mask1] = p_start + (p_aop - p_start) * (t[mask1] / 1.5)
+
+    mask2 = (t > 1.5) & (t <= 4.2)
+    p[mask2] = p_aop + (p_peak - p_aop) * ((t[mask2] - 1.5) / 2.7)
+
+    mask3 = t > 4.2
+    p[mask3] = p_peak - (p_peak - p_start) * ((t[mask3] - 4.2) / 0.8)
+    p[p < p_start] = p_start
+
+    ax1.plot(t, p, color='#2c3e50', lw=2.5, label='Airway Pressure (Paw)')
+    ax1.axhline(p_aop, color='#e74c3c', ls='--', lw=1.5, label=f'AOP = {p_aop:.0f} cmH2O')
+    ax1.axhline(p_start, color='#7f8c8d', ls=':', lw=1.0, label='PEEP (3 cmH2O)')
+
+    ax1.scatter([1.5], [p_aop], color='#e74c3c', s=80, zorder=5)
+    ax1.annotate('AOP Inflection Point\n(Airways Open Here!)', xy=(1.5, p_aop), xytext=(0.3, 17),
+                 arrowprops=dict(arrowstyle='->', color='#e74c3c', lw=2),
+                 fontsize=9.5, fontweight='bold', color='#e74c3c',
+                 bbox=dict(boxstyle='round,pad=0.3', facecolor='#fceae8', edgecolor='#e74c3c', lw=1))
+
+    ax1.text(0.4, 6.0, 'Steep Slope:\nPressurizing Airways Only\n(Airways Closed)', fontsize=8, color='#2980b9', fontweight='bold')
+    ax1.text(2.3, 15.0, 'Shallower Slope:\nGas Enters Alveoli\n(Airways Open)', fontsize=8, color='#27ae60', fontweight='bold')
+
+    ax1.set_title('A. Low-Flow Insufflation Method (Gold Standard)', fontsize=11, fontweight='bold', color='#2c3e50', pad=10)
+    ax1.set_xlabel('Inspiration Time (s) [Low Flow 3-5 L/min]', fontsize=9.5)
+    ax1.set_ylabel('Airway Pressure (Paw, cmH2O)', fontsize=9.5)
+    ax1.set_ylim(0, 28)
+    ax1.grid(True, ls=':', alpha=0.5)
+    ax1.legend(loc='upper left', fontsize=8.5)
+
+    # Panel 2: Driving Pressure Correction Impact
+    categories = ['PEEP < AOP\n(Uncorrected)', 'PEEP >= AOP\n(Corrected Strategy)']
+    dp_values = [18.0, 11.0]
+
+    bars = ax2.bar(categories, dp_values, color=['#e74c3c', '#2ebd59'], width=0.45)
+    ax2.axhline(15, color='#c0392b', ls='--', lw=1.5, label='Safe Threshold (15 cmH2O)')
+
+    for bar in bars:
+        yval = bar.get_height()
+        ax2.text(bar.get_x() + bar.get_width()/2.0, yval + 0.5, f'ΔP = {yval:.0f} cmH2O', ha='center', va='bottom', fontsize=10, fontweight='bold')
+
+    ax2.set_title('B. Driving Pressure Correction Impact', fontsize=11, fontweight='bold', color='#2c3e50', pad=10)
+    ax2.set_ylabel('Driving Pressure ΔP (cmH2O)', fontsize=9.5)
+    ax2.set_ylim(0, 24)
+    ax2.grid(True, ls=':', alpha=0.5, axis='y')
+    ax2.legend(loc='upper right', fontsize=8.5)
+
+    ax2.text(0, 5, 'Uncorrected Overestimation!\nΔP = Pplat - PEEP = 18\n(Appears Unsafe)', ha='center', fontsize=8, color='#900c3f', fontweight='bold', bbox=dict(boxstyle='square,pad=0.2', facecolor='#fdedec', edgecolor='none'))
+    ax2.text(1, 4, 'True Alveolar Stress!\nΔP = Pplat - AOP = 11\n(Actually Safe)', ha='center', fontsize=8, color='#1e8449', fontweight='bold', bbox=dict(boxstyle='square,pad=0.2', facecolor='#eafaf1', edgecolor='none'))
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    plt.close()
+
 
 def generate_ri_ratio_png(out_path):
     import matplotlib
@@ -580,8 +651,10 @@ def run_streamlit():
 
             ### 📙 第二篇：超越指引之床邊生理個人化調校
             > 📄 **Wongtirawit N, Brochard L, et al.** *ARDS management beyond the guidelines: a practical physiology-based approach to individualized care.* **Intensive Care Medicine** (2026).
-            """, unsafe_allow_html=True)
 
+            #### 🗺️ Wongtirawit 2026 Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖
+            """, unsafe_allow_html=True)
+            
             # Insert image check for flowchart
             if os.path.exists("202608ICM_ET_flowchart.png"):
                 st.image("202608ICM_ET_flowchart.png", caption="Wongtirawit 2026 (ICM) Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖", use_container_width=True)
@@ -845,6 +918,58 @@ def run_streamlit():
             paco2 = st.number_input("實際動脈血 PaCO2 (mmHg)", min_value=10.0, max_value=150.0, value=50.0, step=1.0, key="paco2_t2")
             
         st.subheader("⚠️ 氣道開啟壓 (AOP) 偵測與校正 (選填)")
+        
+        # Collapsible Measurement Guide and Diagram for AOP
+        with st.expander("🔍 點此展開／折疊查看 氣道開啟壓 (AOP) 生理學原理、床邊量測方法與波形圖解 (Wongtirawit 2026 Fig 3A/B)", expanded=False):
+            if os.path.exists("aop_diagram.png"):
+                st.image("aop_diagram.png", caption="氣道開啟壓 (AOP) Wongtirawit 2026 Fig 3: (圖 A) 低流速吸氣 P-t 轉折點波形與 (圖 B) 小氣道呼氣末閉合/吸氣末開啟支氣管鏡實景", use_container_width=True)
+            elif os.path.exists("/workspace/aop_diagram.png"):
+                st.image("/workspace/aop_diagram.png", caption="氣道開啟壓 (AOP) Wongtirawit 2026 Fig 3: (圖 A) 低流速吸氣 P-t 轉折點波形與 (圖 B) 小氣道呼氣末閉合/吸氣末開啟支氣管鏡實景", use_container_width=True)
+            elif os.path.exists("/workspace/artifacts/aop_diagram.png"):
+                st.image("/workspace/artifacts/aop_diagram.png", caption="氣道開啟壓 (AOP) Wongtirawit 2026 Fig 3: (圖 A) 低流速吸氣 P-t 轉折點波形與 (圖 B) 小氣道呼氣末閉合/吸氣末開啟支氣管鏡實景", use_container_width=True)
+            else:
+                if not os.path.exists("aop_diagram.png"):
+                    generate_aop_diagram_png("aop_diagram.png")
+                st.image("aop_diagram.png", caption="氣道開啟壓 (AOP) Wongtirawit 2026 Fig 3: (圖 A) 低流速吸氣 P-t 轉折點波形與 (圖 B) 小氣道呼氣末閉合/吸氣末開啟支氣管鏡實景", use_container_width=True)
+                
+            st.markdown(r"""
+            #### 1. 氣道關閉 (Airway Closure) 與 AOP 的生理學原理
+            * **生理機制**：約有 **1/3 的 ARDS 病患**（特別是合併肥胖、嚴重心因性或心因外肺水腫者）存在小氣道塌陷/閉合現象。當 PEEP 設定低於氣道開啟壓（AOP）時，呼氣末小氣道會像被開瓶蓋般完全解剖閉合（如上圖 B 支氣管鏡實景）。
+            * **驅動壓假性放大**：若 $PEEP < AOP$，吸氣開頭呼吸器送出的壓力必須先用於「吹開閉合的小氣道」，這部分壓力並未對肺泡造成實質充氣與拉扯。因此，傳統計算的 $\Delta P = P_{\text{plat}} - PEEP$ 會包含吹開氣道的阻力壓，導致**假性估高驅動壓**。
+            * **真實肺泡驅動壓校正**：當存在氣道關閉時，真正對肺泡產生拉扯的驅動壓應校正為：
+              $$\Delta P_{\text{corrected}} = P_{\text{plat}} - AOP$$
+
+            ---
+
+            #### 2. 常規呼吸器如何測量 AOP？（解決床邊操作疑問）
+
+            ##### ❓ 疑慮解答：平常使用的呼吸器模式（如一般 VCV）能直接看出來嗎？
+            * **無法直接肉眼看出**：常規 VCV 設定的吸氣流速高達 **30–60 L/min**，吸氣時間極短（約 0.8–1.0 秒）。在大流速下，導氣管動態阻力壓（$Flow \times Raw$）巨大，壓力量測會出現高度動態阻力峰值，**掩蓋小氣道開啟時微小的靜態彈性轉折點**。
+            * **必須改為「低流速吸氣（Low-Flow Inflation）」**：當流速降至極低（**2–5 L/min**）時，氣道動態阻力接近於 0，此時壓力量測才反映真正的肺泡加壓曲線（如上圖 A）。
+
+            ##### 🟡 方式一：常規 VCV 模式下的手動低流速操作法（所有 VCV 呼吸器皆可）
+            1. **模式與波形**：切換至 **VCV 容積控制模式**，選擇 **方波 (Square Waveform)**。
+            2. **參數設定**：設定 $V_t \approx 300\text{–}400 \text{ mL}$，$PEEP = 0\text{–}3 \text{ cmH}_2\text{O}$。
+            3. **調低流速**：將吸氣流速（Flow）手動調至最低限度（例如 **3–5 L/min**），或將吸氣時間（$T_i$）拉長至 **5–8 秒**。
+            4. **觀察轉折點**：單次低流速吸氣時，觀察氣道壓–時間（$P\text{-}t$）曲線：
+               * **斜率陡峭段**：氣體僅加壓於呼吸器管路與主氣管，肺泡尚未開啟。
+               * **轉折點 (Inflection Point)**：斜率突然顯著變平緩，代表小氣道被吹開、氣體開始進入肺泡。**該轉折點對應之壓力即為 AOP**（如上圖 A 紅色箭頭）。
+
+            ##### 🟡 方式二：床邊免低流速的替代評估法（快速篩檢）
+            * **漸進 PEEP 試驗法 (Incremental PEEP Trial)**：將 PEEP 從低位逐階調高（例如 5 $\rightarrow$ 8 $\rightarrow$ 10 $\rightarrow$ 12 $\rightarrow$ 14 $\text{ cmH}_2\text{O}$）。當 $PEEP < AOP$ 時，調高 PEEP 平台壓 $P_{\text{plat}}$ 幾乎不升，使得算出的 $\Delta P$ **出現顯著下降**；當 PEEP 超過 AOP 後，$\Delta P$ 停止快速下降。**驅動壓停止下降的 PEEP 點即提示接近 AOP**。
+
+            ##### 🟡 哪些高階 ICU 呼吸器最適合／內建 AOP 自動測量？
+            * **Hamilton Medical (Hamilton-G5, C6, S1 等)**：內建 **P/V Tool (Protective Ventilation Tool)**，可一鍵自動執行低流速（2–10 L/min）充氣，自動抓取 AOP (Lower Inflection Point)。
+            * **Getinge Servo (Servo-u, Servo-i)**：內建 **Open Lung Tool (OLT) / PV Dynamics**，專門進行低流速力學與轉折點分析。
+            * **Dräger Evita (V500, VN500, V800)**：內建 **Low Flow PV Loop** 診斷功能。
+            * **GE Healthcare (Carescape R860)**：內建 **P-V Tool (Inview)** 支援低流速曲線。
+
+            ---
+
+            #### 3. 臨床 PEEP 設定導航
+            * 若測得 **$AOP > PEEP$**（例如 $AOP = 12 \text{ cmH}_2\text{O}$，而目前 $PEEP = 8 \text{ cmH}_2\text{O}$），強烈建議將 PEEP 調高至 **$AOP + 1\text{–}2 \text{ cmH}_2\text{O}$**（例如設定 PEEP 13–14），以維持小氣道全程開放，防止呼氣末小氣道反覆閉合/開啟產生的剪力損傷（Atelectrauma）與吸收性肺塌陷！
+            """, unsafe_allow_html=True)
+
         has_aop = st.checkbox("病患有氣道關閉 (Airway Closure)，需啟用 AOP 校正", key="has_aop_t2")
         aop_val = 0.0
         if has_aop:
