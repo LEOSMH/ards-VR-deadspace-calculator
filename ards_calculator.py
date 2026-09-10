@@ -479,6 +479,78 @@ def generate_ri_ratio_png(out_path):
     plt.savefig(out_path, dpi=150, bbox_inches='tight')
     plt.close()
 
+
+def generate_stressindex_chestcompress_png(out_path='stressindex_chestcompress.png'):
+    try:
+        import matplotlib
+        matplotlib.use('Agg')
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.2), dpi=150)
+        fig.patch.set_facecolor('#ffffff')
+
+        # Panel C: Stress Index
+        t = np.linspace(0, 1, 200)
+        p_linear = 10 + 15 * t
+        p_convex = 10 + 15 * (t ** 1.8)
+        p_concave = 10 + 15 * (t ** 0.5)
+
+        ax1.plot(t, p_convex, color='#c0392b', lw=2.5, label='SI > 1.0 (Overdistension)')
+        ax1.plot(t, p_linear, color='#27ae60', lw=1.8, ls='--', label='SI = 1.0 (Optimal)')
+        ax1.plot(t, p_concave, color='#2980b9', lw=1.8, ls=':', label='SI < 1.0 (Tidal Recruitment)')
+
+        ax1.set_title('Panel C: Stress Index (SI in VCV)', fontsize=10.5, fontweight='bold', pad=10)
+        ax1.set_xlabel('Inspiratory Time (t)', fontsize=9)
+        ax1.set_ylabel('Airway Pressure (Paw, cmH2O)', fontsize=9)
+        ax1.legend(loc='upper left', fontsize=8)
+        ax1.grid(True, ls=':', alpha=0.5)
+        ax1.annotate('Upward Curve!\nStiffness Increases', xy=(0.8, 21), xytext=(0.35, 23),
+                     arrowprops=dict(arrowstyle='->', color='#c0392b', lw=1.5),
+                     fontsize=8, color='#c0392b', fontweight='bold')
+
+        # Panel D: Chest Compression Paradoxical Drop
+        t2 = np.linspace(0, 10, 1000)
+        paw2 = np.ones_like(t2) * 10.0
+        
+        m1 = (t2 >= 0.5) & (t2 <= 1.8)
+        paw2[m1] = 10 + 22 * np.sin(np.pi * (t2[m1] - 0.5) / 1.3)
+        
+        m2 = (t2 >= 2.5) & (t2 <= 3.8)
+        paw2[m2] = 10 + 22 * np.sin(np.pi * (t2[m2] - 2.5) / 1.3)
+
+        m3 = (t2 >= 5.0) & (t2 <= 6.3)
+        paw2[m3] = 10 + 15 * np.sin(np.pi * (t2[m3] - 5.0) / 1.3)
+
+        m4 = (t2 >= 7.5) & (t2 <= 8.8)
+        paw2[m4] = 10 + 15 * np.sin(np.pi * (t2[m4] - 7.5) / 1.3)
+
+        ax2.plot(t2, paw2, color='#2c3e50', lw=2.0)
+        ax2.axhline(10, color='#7f8c8d', ls='--', lw=1)
+        ax2.axhline(32, color='#c0392b', ls=':', lw=1.2)
+        ax2.axhline(25, color='#27ae60', ls=':', lw=1.2)
+
+        ax2.annotate('Gentle Chest Compression\nBegins Here!', xy=(4.8, 18), xytext=(3.5, 26),
+                     arrowprops=dict(arrowstyle='->', color='#d35400', lw=1.8),
+                     fontsize=8, color='#d35400', fontweight='bold')
+
+        ax2.annotate('Pplat = 32', xy=(1.2, 32), xytext=(0.5, 34),
+                     fontsize=8, color='#c0392b', fontweight='bold')
+        ax2.annotate('Pplat = 25 (Paradoxical Drop!)', xy=(6.0, 25), xytext=(5.2, 30),
+                     fontsize=8, color='#27ae60', fontweight='bold')
+
+        ax2.set_title('Panel D: Chest Compression Test (Paradoxical Drop)', fontsize=10.5, fontweight='bold', pad=10)
+        ax2.set_xlabel('Time (seconds)', fontsize=9)
+        ax2.set_ylabel('Airway Pressure (Paw, cmH2O)', fontsize=9)
+        ax2.set_ylim(0, 38)
+        ax2.grid(True, ls=':', alpha=0.5)
+
+        plt.tight_layout()
+        plt.savefig(out_path, dpi=150, bbox_inches='tight')
+        plt.close()
+    except Exception as e:
+        pass
+
 def run_streamlit():
     import streamlit as st
     
@@ -673,7 +745,30 @@ def run_streamlit():
                * **通氣強度 (Ventilation Intensity)**：若需調高呼吸速率以排除 $CO_2$，應評估 $4 \times \Delta P + RR$；$\Delta P$ 增加 $1 \text{ cmH}_2\text{O}$ 對肺損傷的負擔相當於呼吸速率增加 $4 \text{ bpm}$。
             2. **高驅動壓 ($\Delta P$) 床邊鑑別與排除**：
                * **排除氣道關閉 (Airway Closure)**：測量氣道開啟壓 ($AOP$)，若 $PEEP < AOP$，真正的驅動壓為 $P_{\text{plat}} - AOP$。
-               * **排除肺過度膨脹 (Overdistension)**：觀察 VCV 下 Paw 波形向上彎曲（Stress Index $> 1$），或執行 **床邊胸部輕壓測試 (Chest Compression Test)**——若輕壓胸部反而使 $P_{\text{plat}}$ 「悖論性下降」，提示肺過度膨脹，應調低 PEEP。
+               * **排除肺過度膨脹 (Overdistension / Hyperinflation)**：
+                 
+                 ##### 🗺️ Wongtirawit 2026 Fig 3C/D: Stress Index 與床邊胸部輕壓測試波形示意圖
+
+                 if os.path.exists("stressindex_chestcompress.png"):
+                     st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+                 elif os.path.exists("/workspace/stressindex_chestcompress.png"):
+                     st.image("/workspace/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+                 elif os.path.exists("/workspace/artifacts/stressindex_chestcompress.png"):
+                     st.image("/workspace/artifacts/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+                 else:
+                     if not os.path.exists("stressindex_chestcompress.png"):
+                         generate_stressindex_chestcompress_png("stressindex_chestcompress.png")
+                     st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+
+                 * **方法 A：Stress Index (SI, 壓力指數)**  
+                   在 VCV (方波/恒定流速) 模式下，觀察吸氣過程中氣道壓–時間 ($P\text{-}t$) 曲線之幾何形狀（$P = a \cdot t^b + c$）：  
+                   - **$SI < 1.0$ (向下凹陷, Concave)**：代表隨吸氣容積增加，肺部順應性改善，存在潮氣復張 (Tidal Recruitment)，建議適度調高 PEEP。  
+                   - **$SI = 1.0$ (呈直線, Linear)**：代表吸氣過程中肺順應性維持恆定，為最佳肺保護通氣區間。  
+                   - **$SI > 1.0$ (向上彎曲, Convex)**：如上圖 C，代表吸氣末肺泡過度膨脹，肺泡彈抗陡增，應調低 PEEP 或降低 $V_t$。
+
+                 * **方法 B：床邊胸部輕壓測試 (Gentle Chest Compression Test)**  
+                   - **操作方式**：在 VCV 被動通氣下，於病患胸壁或上腹部給予持續輕壓（Sustained Gentle Compression），暫時減少肺容積。  
+                   - **生理學與壓力悖論 (Pressure Paradox)**：一般正常/未過度充氣的肺部，外加胸壁負載會使 $P_{\text{plat}}$ 與驅動壓 $\Delta P$ 向上升高；然而，對 **已過度膨脹的肺部**（如上圖 D），輕壓胸部減少了過度充氣的肺容積，解除了肺泡僵硬區，反而使平台壓 $P_{\text{plat}}$ 與驅動壓 $\Delta P$ **「悖論性顯著下降 (Paradoxical Decrease)」**！床邊出現此現象即證實存在過度膨脹，提示應調低 PEEP 或潮氣容積。
             3. **右心室 (RV) 肺血管後負荷保護**：
                * 20–25% 患者會併發急性肺心症 (ACP)。PEEP 過低（肺塌陷）與過高（肺過度膨脹）都會增加肺血管阻力 (PVR)。高危患者應早期做心臟超音波，嚴格限制 $P_{\text{plat}} < 26\text{–}28 \text{ cmH}_2\text{O}$。
             4. **自主呼吸驅力監測與防範 PSILI**：
@@ -968,6 +1063,34 @@ def run_streamlit():
 
             #### 3. 臨床 PEEP 設定導航
             * 若測得 **$AOP > PEEP$**（例如 $AOP = 12 \text{ cmH}_2\text{O}$，而目前 $PEEP = 8 \text{ cmH}_2\text{O}$），強烈建議將 PEEP 調高至 **$AOP + 1\text{–}2 \text{ cmH}_2\text{O}$**（例如設定 PEEP 13–14），以維持小氣道全程開放，防止呼氣末小氣道反覆閉合/開啟產生的剪力損傷（Atelectrauma）與吸收性肺塌陷！
+            """, unsafe_allow_html=True)
+
+        
+        # Collapsible Measurement Guide and Diagram for Overdistension in Tab 2
+        with st.expander("🔍 點此展開／折疊查看 肺過度膨脹 (Overdistension) 判讀：Stress Index 與床邊胸部輕壓測試 (Wongtirawit 2026 Fig 3C/D)", expanded=False):
+            if os.path.exists("stressindex_chestcompress.png"):
+                st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+            elif os.path.exists("/workspace/stressindex_chestcompress.png"):
+                st.image("/workspace/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+            elif os.path.exists("/workspace/artifacts/stressindex_chestcompress.png"):
+                st.image("/workspace/artifacts/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+            else:
+                if not os.path.exists("stressindex_chestcompress.png"):
+                    generate_stressindex_chestcompress_png("stressindex_chestcompress.png")
+                st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
+
+            st.markdown(r"""
+            #### 1. Stress Index (SI, 壓力指數) 生理判讀
+            * **生理原理**：在 VCV 方波（恒定流速）被動通氣下，觀察吸氣過程中氣道壓–時間 ($P	ext{-}t$) 曲線之幾何形狀（$P = a \cdot t^b + c$）：
+              - **$SI < 1.0$ (向下凹陷, Concave)**：代表隨吸氣容積增加，肺部順應性變好，存在潮氣復張 (Tidal Recruitment)，建議適度調高 PEEP。
+              - **$SI = 1.0$ (呈直線, Linear)**：代表吸氣過程中肺順應性維持恆定，為最佳肺保護通氣區間。
+              - **$SI > 1.0$ (向上彎曲, Convex)**：如上圖 C，代表吸氣末肺泡過度膨脹，肺泡彈抗陡增，應調低 PEEP 或降低 $V_t$。
+
+            ---
+
+            #### 2. 床邊胸部輕壓測試 (Gentle Chest Compression Test)
+            * **操作方式**：在 VCV 被動通氣下，於病患胸壁或上腹部給予持續輕壓（Sustained Gentle Compression），暫時減少肺容積。
+            * **生理學與壓力悖論 (Pressure Paradox)**：一般正常/未過度充氣的肺部，外加胸壁負載會使 $P_{	ext{plat}}$ 與驅動壓 $\Delta P$ 向上升高；然而，對 **已過度膨脹的肺部**（如上圖 D），輕壓胸部減少了過度充氣的肺容積，解除了肺泡僵硬區，反而使平台壓 $P_{	ext{plat}}$ 與驅動壓 $\Delta P$ **「悖論性顯著下降 (Paradoxical Decrease)」**！床邊出現此現象即證實存在過度膨脹，提示應調低 PEEP 或潮氣容積。
             """, unsafe_allow_html=True)
 
         has_aop = st.checkbox("病患有氣道關閉 (Airway Closure)，需啟用 AOP 校正", key="has_aop_t2")
