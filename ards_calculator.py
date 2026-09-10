@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-ARDS Bedside Physiological Calculator & Dead-Space Estimator v17
+ARDS Bedside Physiological Calculator & Dead-Space Estimator v18
 臨床床邊生理指標、死腔預估、可復張性(R/I Ratio)、自主呼吸驅力與生物表型預測計算器 (Streamlit Web App & CLI 雙模工具)
 Based on:
 1. Nuckton 2002 (NEJM) & Sinha 2019 (AJRCCM) - Ventilatory Ratio (VR) & Dead Space
@@ -219,11 +219,20 @@ def run_streamlit():
         2. **低血氧判定標準雙軌並行**：
            - 在血氧飽和度 $SpO_2 \le 97\%$ 的前提下，允許以 **$SpO_2/FiO_2 \le 315$** 代替傳統動脈血氣的 $PaO_2/FiO_2 \le 300$。
         3. **影像學標準升級**：
-           - 保留雙側肺部浸潤影 (bilateral opacities) 診斷。
+           - 保留雙側肺部浸潤影 (Bilateral opacities) 診斷（須排除單純胸水、全肺塌陷或結節腫瘤）。
            - **新增肺部超音波 (Lung Ultrasound)** 作為可接受的影像診斷工具，極佳適用於不便搬動病患或資源有限環境。
         4. **資源有限地區的簡化條件**：
            - 在這類環境下，取消對 PEEP、特定氧氣流速或特定呼吸器設備的強制要求，降低床邊診斷門檻。
         """, unsafe_allow_html=True)
+
+        st.info(r'''
+💡 **經典回顧：2012 年柏林定義 (Berlin Definition) 四大核心診斷標準與影像學排除條款**：
+
+1. **發病時間 (Timing)**：在已知臨床誘因發生後 **1 週內**出現新發或惡化的呼吸道症狀。
+2. **胸部影像學 (Chest Imaging)**：胸部 X 光 (CXR) 或 CT 呈現雙側肺浸潤影 (Bilateral opacities)，且**「不能完全用胸水 (Pleural effusions)、肺葉/全肺塌陷 (Lobar/lung collapse) 或肺結節/腫瘤 (Nodules) 來解釋」**。
+3. **肺水腫來源 (Origin of Edema)**：呼吸衰竭**不能完全歸因於心臟衰竭或體液過負荷 (Fluid overload)**。無明確危險因子（如肺炎、敗血症、誤吸等）時，須經客觀評估（如心臟超音波）排除心因性水腫。
+4. **缺氧受損程度 (Oxygenation)**：在 $\text{PEEP} \ge 5\text{ cmH}_2\text{O}$ 條件下，分為輕度 ($200 < PaO_2/FiO_2 \le 300$)、中度 ($100 < PaO_2/FiO_2 \le 200$)、重度 ($PaO_2/FiO_2 \le 100$)。
+''')
         
         # Try to show image
         import os
@@ -863,7 +872,7 @@ def run_streamlit():
 def run_cli():
     print("="*65)
     print("      ARDS BEDSIDE PHYSIOLOGICAL & BIOLOGICAL PHENOTYPE MASTER CALCULATOR")
-    print("                臨床生理、死腔、可復張性與生物表型計算器 v17")
+    print("                臨床生理、死腔、可復張性與生物表型計算器 v18")
     print("="*65)
     
     print("\n請選擇您要執行的功能：")
