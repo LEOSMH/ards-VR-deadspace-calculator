@@ -207,6 +207,207 @@ def ensure_waveform_image():
     except Exception as e:
         pass
 
+
+def ensure_fig5_exists():
+    import os
+    if not os.path.exists("fig5_waveforms.png") and not os.path.exists("/workspace/fig5_waveforms.png"):
+        try:
+            import matplotlib
+            matplotlib.use('Agg')
+            import matplotlib.pyplot as plt
+            import numpy as np
+            
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.2), dpi=150)
+            
+            # Panel A
+            t1 = np.linspace(0, 7, 700)
+            paw1 = np.ones_like(t1) * 8.0
+            mask1 = (t1 >= 0.5) & (t1 <= 1.8)
+            paw1[mask1] = 8.0 + 10.0 * np.sin(np.pi * (t1[mask1] - 0.5) / 1.3)
+            mask_occ = (t1 >= 3.2) & (t1 <= 4.8)
+            paw1[mask_occ] = 8.0 - 18.0 * np.sin(np.pi * (t1[mask_occ] - 3.2) / 1.6)
+            mask2 = (t1 >= 5.3) & (t1 <= 6.6)
+            paw1[mask2] = 8.0 + 10.0 * np.sin(np.pi * (t1[mask2] - 5.3) / 1.3)
+            
+            ax1.plot(t1, paw1, color='#2c3e50', lw=2.2)
+            ax1.axhline(8, color='#7f8c8d', ls='--', lw=1)
+            ax1.set_ylim(-15, 25)
+            ax1.set_title('Panel A: End-Expiratory Occlusion (P0.1 & Delta Pocc)', fontsize=11, fontweight='bold', pad=10)
+            ax1.set_ylabel('Airway Pressure (Paw, cmH2O)', fontsize=9.5)
+            ax1.set_xlabel('Time (seconds)', fontsize=9.5)
+            ax1.grid(True, ls=':', alpha=0.5)
+            ax1.annotate('P0.1 (0.1s Drop)', xy=(3.3, 5.5), xytext=(2.2, 12),
+                         arrowprops=dict(arrowstyle='->', color='#e74c3c', lw=1.8),
+                         fontsize=9, fontweight='bold', color='#e74c3c')
+            ax1.plot([3.2, 3.3], [8.0, 5.5], color='#e74c3c', lw=3)
+            ax1.annotate(r'Delta Pocc (Target >= -20 cmH2O)', 
+                         xy=(4.0, -10.0), xytext=(3.5, -13.5),
+                         arrowprops=dict(arrowstyle='->', color='#8e44ad', lw=1.8),
+                         fontsize=8.5, fontweight='bold', color='#8e44ad')
+            
+            # Panel B
+            t2 = np.linspace(0, 6, 600)
+            paw2 = np.ones_like(t2) * 8.0
+            mask_in = (t2 >= 2.0) & (t2 <= 3.0)
+            paw2[mask_in] = 8.0 + 10.0 * np.sin(0.5 * np.pi * (t2[mask_in] - 2.0) / 1.0)
+            mask_hold = (t2 >= 3.0) & (t2 <= 4.5)
+            paw2[mask_hold] = 22.0 - 0.5 * np.exp(-3 * (t2[mask_hold] - 3.0))
+            
+            ax2.plot(t2, paw2, color='#2c3e50', lw=2.2)
+            ax2.axhline(8, color='#7f8c8d', ls='--', lw=1)
+            ax2.axhline(18, color='#e67e22', ls=':', lw=1.2)
+            ax2.axhline(22, color='#27ae60', ls=':', lw=1.2)
+            ax2.set_ylim(0, 28)
+            ax2.set_title('Panel B: End-Inspiratory Occlusion / i hold (PMI = Pplat - Ppeak)', fontsize=11, fontweight='bold', pad=10)
+            ax2.set_ylabel('Airway Pressure (Paw, cmH2O)', fontsize=9.5)
+            ax2.set_xlabel('Time (seconds)', fontsize=9.5)
+            ax2.grid(True, ls=':', alpha=0.5)
+            ax2.text(0.5, 18.5, 'Ppeak = 18', fontsize=9, color='#e67e22', fontweight='bold')
+            ax2.text(0.5, 22.5, 'Pplat = 22 (via i hold)', fontsize=9, color='#27ae60', fontweight='bold')
+            ax2.annotate('', xy=(3.8, 22), xytext=(3.8, 18),
+                         arrowprops=dict(arrowstyle='<->', color='#c0392b', lw=2))
+            ax2.text(4.0, 19.5, r'PMI = Pplat - Ppeak = +4.0 cmH2O (>3: High Effort)', 
+                     fontsize=8.5, fontweight='bold', color='#c0392b')
+
+            plt.tight_layout()
+            plt.savefig('fig5_waveforms.png', dpi=150, bbox_inches='tight')
+            plt.close()
+        except Exception as e:
+            pass
+
+
+# ---------------------------------------------------------
+# Auto Image Generators for Standalone Resilience
+# ---------------------------------------------------------
+def generate_roadmap_png(out_path):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(figsize=(11, 7.5), dpi=150)
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0, 100)
+    ax.axis('off')
+    fig.patch.set_facecolor('#ffffff')
+
+    box_blue = dict(boxstyle="round,pad=0.5", facecolor="#ebf5fb", edgecolor="#2980b9", lw=1.5)
+    box_purple = dict(boxstyle="round,pad=0.5", facecolor="#f4ecf7", edgecolor="#8e44ad", lw=1.5)
+    box_orange = dict(boxstyle="round,pad=0.5", facecolor="#fef5e7", edgecolor="#e67e22", lw=1.5)
+
+    ax.text(50, 96, "First-Hour Roadmap for Newly Intubated ARDS Patients (Wongtirawit 2026 Fig 2)",
+            ha="center", va="center", fontsize=12, fontweight="bold", color="#2c3e50")
+
+    ax.text(20, 85, "1. Endotracheal Intubation\n& Initial Settings", ha="center", va="center", fontsize=10, fontweight="bold", bbox=box_blue)
+    ax.text(20, 68, "• Vt: 6 mL/kg PBW\n• Initial PEEP (e.g. 8-12 cmH2O)\n• RR for pH >= 7.20 & PaCO2\n• FiO2 for SpO2 92-96%\n• Resuscitation & Etiology",
+            ha="center", va="center", fontsize=8.5, bbox=dict(boxstyle="round,pad=0.4", facecolor="#ffffff", edgecolor="#bdc3c7", lw=1))
+
+    ax.annotate("", xy=(42, 76), xytext=(33, 76), arrowprops=dict(arrowstyle="->", color="#2c3e50", lw=2))
+
+    ax.text(52, 85, "2. 1-Hour Re-evaluation\n(ABG & Lung Mechanics)", ha="center", va="center", fontsize=10, fontweight="bold", bbox=box_purple)
+
+    ax.annotate("", xy=(52, 62), xytext=(52, 78), arrowprops=dict(arrowstyle="->", color="#8e44ad", lw=1.5))
+    ax.text(52, 57, "Evaluate pH & PaCO2\n• Trade-off: 1 cmH2O dP ~ 4 bpm RR\n• Correct Metabolic Acidosis if pH < 7.20",
+            ha="center", va="center", fontsize=8.5, bbox=box_orange)
+
+    ax.annotate("", xy=(78, 85), xytext=(63, 85), arrowprops=dict(arrowstyle="->", color="#8e44ad", lw=1.5))
+    ax.text(85, 85, "Evaluate PaO2/FiO2", ha="center", va="center", fontsize=9.5, fontweight="bold", bbox=box_purple)
+
+    ax.annotate("", xy=(85, 72), xytext=(85, 79), arrowprops=dict(arrowstyle="->", color="#2c3e50", lw=1.5))
+    ax.text(85, 66, "P/F < 150 & PEEP > 5\n& FiO2 > 0.6?\nYES -> Prone Position\nNO -> Supine Position",
+            ha="center", va="center", fontsize=8.5, bbox=box_orange)
+
+    ax.annotate("", xy=(50, 42), xytext=(52, 50), arrowprops=dict(arrowstyle="->", color="#2c3e50", lw=2))
+    ax.annotate("", xy=(50, 42), xytext=(85, 59), arrowprops=dict(arrowstyle="->", color="#2c3e50", lw=2))
+
+    ax.text(50, 36, "3. Evaluate Recruitability: R/I Ratio", ha="center", va="center", fontsize=11, fontweight="bold", bbox=box_blue)
+
+    ax.annotate("", xy=(25, 20), xytext=(40, 30), arrowprops=dict(arrowstyle="->", color="#e74c3c", lw=2))
+    ax.text(25, 25, "R/I < 0.5\n(Low Recruiter)", ha="center", va="center", fontsize=9, fontweight="bold", color="#c0392b")
+    ax.text(25, 14, "Low Recruitability\n• Limit PEEP to 8-12 cmH2O\n• Avoid aggressive RMs\n• Prevent overdistension & RV failure",
+            ha="center", va="center", fontsize=8.5, bbox=dict(boxstyle="round,pad=0.4", facecolor="#fadbd8", edgecolor="#e74c3c", lw=1.5))
+
+    ax.annotate("", xy=(75, 20), xytext=(60, 30), arrowprops=dict(arrowstyle="->", color="#27ae60", lw=2))
+    ax.text(75, 25, "R/I >= 0.5\n(High Recruiter)", ha="center", va="center", fontsize=9, fontweight="bold", color="#27ae60")
+    ax.text(75, 14, "High Recruitability\n• Titrate PEEP (12-20 cmH2O)\n• Esophageal TPP target 0 +/- 2 cmH2O\n• EIT 'Crossing point' / Best dP",
+            ha="center", va="center", fontsize=8.5, bbox=dict(boxstyle="round,pad=0.4", facecolor="#d4efdf", edgecolor="#27ae60", lw=1.5))
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    plt.close()
+
+def generate_ri_ratio_png(out_path):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import numpy as np
+    fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 6.5), sharex=True, dpi=150)
+    fig.patch.set_facecolor('#ffffff')
+
+    time = np.linspace(0, 12, 1000)
+    paw = np.zeros_like(time)
+    flow = np.zeros_like(time)
+    vol = np.zeros_like(time)
+
+    for i, t in enumerate(time):
+        if 0 <= t < 1.0:
+            paw[i] = 15 + 15 * np.sin(np.pi * t / 1.0)
+            flow[i] = 30 * np.sin(np.pi * t / 1.0)
+            vol[i] = 450 * np.sin(np.pi * t / 1.0)
+        elif 1.0 <= t < 3.0:
+            paw[i] = 15
+            flow[i] = -20 * np.exp(-3 * (t - 1.0))
+            vol[i] = 450 * np.exp(-3 * (t - 1.0))
+        elif 3.0 <= t < 4.0:
+            paw[i] = 15 + 15 * np.sin(np.pi * (t - 3.0) / 1.0)
+            flow[i] = 30 * np.sin(np.pi * (t - 3.0) / 1.0)
+            vol[i] = 450 * np.sin(np.pi * (t - 3.0) / 1.0)
+        elif 4.0 <= t < 6.0:
+            paw[i] = 15
+            flow[i] = -15 * np.exp(-2 * (t - 4.0))
+            vol[i] = 450 * np.exp(-2 * (t - 4.0))
+        elif 6.0 <= t < 7.0:
+            paw[i] = 5 + 12 * np.sin(np.pi * (t - 6.0) / 1.0)
+            flow[i] = 25 * np.sin(np.pi * (t - 6.0) / 1.0)
+            vol[i] = 400 * np.sin(np.pi * (t - 6.0) / 1.0)
+        elif 7.0 <= t < 10.0:
+            paw[i] = 5
+            flow[i] = -50 * np.exp(-1.5 * (t - 7.0))
+            vol[i] = 1100 * np.exp(-1.5 * (t - 7.0))
+        else:
+            paw[i] = 5 + 12 * np.sin(np.pi * (t - 10.0) / 1.0)
+            flow[i] = 25 * np.sin(np.pi * (t - 10.0) / 1.0)
+            vol[i] = 400 * np.sin(np.pi * (t - 10.0) / 1.0)
+
+    ax1.plot(time, paw, color='#2980b9', lw=2)
+    ax1.set_ylabel('Paw (cmH2O)', fontsize=9, fontweight='bold', color='#2c3e50')
+    ax1.set_ylim(0, 35)
+    ax1.axhline(15, color='#95a5a6', linestyle='--', lw=1, label='PEEPhigh = 15')
+    ax1.axhline(5, color='#e74c3c', linestyle='--', lw=1, label='PEEPlow = 5')
+    ax1.legend(loc='upper right', fontsize=8)
+    ax1.grid(True, linestyle=':', alpha=0.5)
+    ax1.set_title("Recruitability Assessment with Recruitment-to-Inflation (R/I) Ratio (Wongtirawit 2026 Fig 4)", fontsize=11, fontweight='bold', color='#2c3e50')
+
+    ax1.annotate('One-Breath PEEP Drop\n(15 -> 5 cmH2O)', xy=(6.0, 15), xytext=(6.5, 25),
+                 arrowprops=dict(facecolor='#e74c3c', shrink=0.05, width=1.5, headwidth=6),
+                 fontsize=8.5, fontweight='bold', color='#c0392b')
+
+    ax2.plot(time, flow, color='#27ae60', lw=2)
+    ax2.set_ylabel('Flow (L/min)', fontsize=9, fontweight='bold', color='#2c3e50')
+    ax2.axhline(0, color='#2c3e50', linestyle='-', lw=0.8)
+    ax2.grid(True, linestyle=':', alpha=0.5)
+
+    ax3.plot(time, vol, color='#e67e22', lw=2)
+    ax3.set_ylabel('Volume (mL)', fontsize=9, fontweight='bold', color='#2c3e50')
+    ax3.set_xlabel('Time (seconds)', fontsize=9, fontweight='bold', color='#2c3e50')
+    ax3.grid(True, linestyle=':', alpha=0.5)
+
+    ax3.annotate('V_exp_drop (1100 mL)\n= VTe + V_recruited + V_inflation', xy=(7.2, 800), xytext=(8.0, 950),
+                 arrowprops=dict(facecolor='#e67e22', shrink=0.05, width=1.5, headwidth=6),
+                 fontsize=8.5, fontweight='bold', color='#d35400')
+
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=150, bbox_inches='tight')
+    plt.close()
+
 def run_streamlit():
     import streamlit as st
     
@@ -771,6 +972,19 @@ def run_streamlit():
         """, unsafe_allow_html=True)
 
         st.subheader("📋 R/I Ratio 床邊詳細操作步驟 (Step-by-Step Bedside Guide)")
+
+        # Display RI ratio.png image in Tab 3
+        if os.path.exists("RI ratio.png"):
+            st.image("RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+        elif os.path.exists("/workspace/RI ratio.png"):
+            st.image("/workspace/RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+        elif os.path.exists("RI_ratio.png"):
+            st.image("RI_ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+        else:
+            if not os.path.exists("ri_ratio_diagram.png"):
+                generate_ri_ratio_png("ri_ratio_diagram.png")
+            st.image("ri_ratio_diagram.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+
         st.markdown(r"""
         <div style="background-color: #f0f7fc; padding: 18px; border-radius: 8px; border-left: 5px solid #2980b9; margin-bottom: 20px;">
             <p style="margin-top:0; font-size:15px; font-weight:600; color:#2980b9;">🛠️ 呼氣單步降壓法 (One-Breath PEEP Reduction) 執行步驟：</p>
@@ -885,7 +1099,16 @@ def run_streamlit():
         
 
         # Collapsible Measurement Guide for Spontaneous Drive & Effort
-        with st.expander("🛠️ 點此展開／折疊查看 P0.1、ΔPocc、Ppeak/Pplat (PMI) 床邊詳細量測步驟與生理學原理", expanded=False):
+        with st.expander("🛠️ 點此展開／折疊查看 P0.1、ΔPocc、Ppeak/Pplat (PMI) 床邊詳細量測步驟、生理學原理與波形對照圖", expanded=False):
+            ensure_fig5_exists()
+            import os
+            if os.path.exists("fig5_waveforms.png"):
+                st.image("fig5_waveforms.png", caption="Wongtirawit 2026 (ICM) Fig 5B: 床邊遮斷波形對照圖 (圖 A: P0.1 & ΔPocc 呼氣末遮斷 | 圖 B: i hold 吸氣末遮斷與 PMI)", use_container_width=True)
+            elif os.path.exists("/workspace/fig5_waveforms.png"):
+                st.image("/workspace/fig5_waveforms.png", caption="Wongtirawit 2026 (ICM) Fig 5B: 床邊遮斷波形對照圖 (圖 A: P0.1 & ΔPocc 呼氣末遮斷 | 圖 B: i hold 吸氣末遮斷與 PMI)", use_container_width=True)
+            elif os.path.exists("/workspace/scratch/fig5_waveforms.png"):
+                st.image("/workspace/scratch/fig5_waveforms.png", caption="Wongtirawit 2026 (ICM) Fig 5B: 床邊遮斷波形對照圖 (圖 A: P0.1 & ΔPocc 呼氣末遮斷 | 圖 B: i hold 吸氣末遮斷與 PMI)", use_container_width=True)
+
             st.markdown(r"""
             #### 1. P0.1 (氣道百毫秒遮斷壓 / Airway Occlusion Pressure at 0.1s)
             * **床邊量測步驟**：
@@ -933,7 +1156,7 @@ def run_streamlit():
             p01 = st.number_input("P0.1 氣道遮斷壓 (cmH2O)", min_value=0.0, max_value=15.0, value=2.0, step=0.5, help="吸氣開始 100 毫秒時的壓力降，反映大腦呼吸驅力。正常人或合適通氣支持下約為 1.5 - 3.5")
             dp_occ = st.number_input("ΔPocc 呼氣末遮斷努力壓差 (cmH2O)", min_value=-50.0, max_value=0.0, value=-12.0, step=1.0, help="進行呼氣末遮斷(end-expiratory hold)時，病患自主吸氣造成的最深壓力降，用以估算動態跨肺驅動壓")
             
-            st.info("💡 **自主輔助通氣（如 PSV）下 Ppeak 與 Pplat 測量方式**：\n在自發呼吸/PSV 模式下，於病患吸氣末短暫按下呼吸器的 **吸氣遮斷（Inspiratory hold / i hold，約 0.2–0.3 秒）**。當氣流停止、吸氣肌放鬆後，壓力向上彈升至平台值（Pplat），即可讀取 Pplat 並計算肌肉壓力指數 PMI ($P_{\\text{plat}} - P_{\\text{peak}}$)。")
+            
 
             p_peak_as = st.number_input("自主輔助通氣下 Peak Pressure (cmH2O)", min_value=5.0, max_value=50.0, value=18.0, step=1.0, key="pp_t3", help="在 PSV 等自主模式下，於吸氣末按下 i hold 之前氣流尚未停止時的最高氣道壓 (Ppeak)")
             p_plat_as = st.number_input("自主輔助通氣下 Plateau Pressure (cmH2O)", min_value=5.0, max_value=50.0, value=22.0, step=1.0, key="pplat_t3", help="在 PSV 下短暫按下吸氣遮斷 (Inspiratory hold / i hold) 測得。肌肉放鬆後壓力若向上回彈，則 Pplat 會大於 Ppeak")
