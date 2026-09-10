@@ -1191,8 +1191,20 @@ def run_streamlit():
         使用 **R/I Ratio 呼氣單步降壓法**，可以幫助醫師在床邊 10 秒內區分出病患屬於 **「高復張性」** 還是 **「低復張性」** 亞型，避免造成嚴重肺部過度充氣與右心後負荷增加。\n
         """)
         
-        # Collapsible Math Formulas for R/I Ratio with Conceptual Derivation
-        with st.expander("📐 點此展開／折疊查看 R/I Ratio 核心計算生理公式與概念推導 (C_rec / C_low)", expanded=False):
+        # Collapsible Math Formulas for R/I Ratio with Conceptual Derivation & Image
+        with st.expander("📐 點此展開／折疊查看 R/I Ratio 核心計算生理公式、概念推導與波形拆解圖 (Wongtirawit 2026 Fig 4)", expanded=False):
+            # Display RI ratio.png image inside formula expander
+            if os.path.exists("RI ratio.png"):
+                st.image("RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+            elif os.path.exists("/workspace/RI ratio.png"):
+                st.image("/workspace/RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+            elif os.path.exists("RI_ratio.png"):
+                st.image("RI_ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+            else:
+                if not os.path.exists("ri_ratio_diagram.png"):
+                    generate_ri_ratio_png("ri_ratio_diagram.png")
+                st.image("ri_ratio_diagram.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+
             st.markdown(r"""
             #### 🧬 核心生理概念定義：兩個順應性 (Compliance) 的比值
             在 Chen L & Brochard L (2020 AJRCCM) 的原始研究中，**R/I Ratio 的本質就是「復張肺順應性」與「已充氣肺順應性」的比值**：
@@ -1222,19 +1234,8 @@ def run_streamlit():
             *(當比值 $\ge 0.5$ 時，代表高 PEEP 救回之肺泡順應性已達原本開放肺泡順應性的 50% 以上，定義為高可復張性 High Recruiter)*。
             """, unsafe_allow_html=True)
 
-        # Collapsible Bedside Operation Guide & Diagram
-        with st.expander("📋 點此展開／折疊查看 R/I Ratio 床邊詳細操作步驟 (Step-by-Step Guide) 與波形拆解圖", expanded=False):
-            # Display RI ratio.png image inside expander
-            if os.path.exists("RI ratio.png"):
-                st.image("RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-            elif os.path.exists("/workspace/RI ratio.png"):
-                st.image("/workspace/RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-            elif os.path.exists("RI_ratio.png"):
-                st.image("RI_ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-            else:
-                if not os.path.exists("ri_ratio_diagram.png"):
-                    generate_ri_ratio_png("ri_ratio_diagram.png")
-                st.image("ri_ratio_diagram.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+        # Collapsible Bedside Operation Guide (No Image)
+        with st.expander("📋 點此展開／折疊查看 R/I Ratio 床邊詳細操作步驟 (Step-by-Step Guide)", expanded=False):
 
             st.markdown(r"""
             <div style="background-color: #f0f7fc; padding: 18px; border-radius: 8px; border-left: 5px solid #2980b9; margin-bottom: 20px;">
