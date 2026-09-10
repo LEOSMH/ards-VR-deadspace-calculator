@@ -1066,34 +1066,6 @@ def run_streamlit():
             * 若測得 **$AOP > PEEP$**（例如 $AOP = 12 \text{ cmH}_2\text{O}$，而目前 $PEEP = 8 \text{ cmH}_2\text{O}$），強烈建議將 PEEP 調高至 **$AOP + 1\text{–}2 \text{ cmH}_2\text{O}$**（例如設定 PEEP 13–14），以維持小氣道全程開放，防止呼氣末小氣道反覆閉合/開啟產生的剪力損傷（Atelectrauma）與吸收性肺塌陷！
             """, unsafe_allow_html=True)
 
-        
-        # Collapsible Measurement Guide and Diagram for Overdistension in Tab 2
-        with st.expander("🔍 點此展開／折疊查看 肺過度膨脹 (Overdistension) 判讀：Stress Index 與床邊胸部輕壓測試 (Wongtirawit 2026 Fig 3C/D)", expanded=False):
-            if os.path.exists("stressindex_chestcompress.png"):
-                st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
-            elif os.path.exists("/workspace/stressindex_chestcompress.png"):
-                st.image("/workspace/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
-            elif os.path.exists("/workspace/artifacts/stressindex_chestcompress.png"):
-                st.image("/workspace/artifacts/stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
-            else:
-                if not os.path.exists("stressindex_chestcompress.png"):
-                    generate_stressindex_chestcompress_png("stressindex_chestcompress.png")
-                st.image("stressindex_chestcompress.png", caption="Wongtirawit 2026 (ICM) Fig 3C/D: (圖 C) Stress Index 向上彎曲波形與 (圖 D) 床邊胸部輕壓測試悖論性降壓波形", use_container_width=True)
-
-            st.markdown(r"""
-            #### 1. Stress Index (SI, 壓力指數) 生理判讀
-            * **生理原理**：在 VCV 方波（恒定流速）被動通氣下，觀察吸氣過程中氣道壓–時間 ($P	ext{-}t$) 曲線之幾何形狀（$P = a \cdot t^b + c$）：
-              - **$SI < 1.0$ (向下凹陷, Concave)**：代表隨吸氣容積增加，肺部順應性變好，存在潮氣復張 (Tidal Recruitment)，建議適度調高 PEEP。
-              - **$SI = 1.0$ (呈直線, Linear)**：代表吸氣過程中肺順應性維持恆定，為最佳肺保護通氣區間。
-              - **$SI > 1.0$ (向上彎曲, Convex)**：如上圖 C，代表吸氣末肺泡過度膨脹，肺泡彈抗陡增，應調低 PEEP 或降低 $V_t$。
-
-            ---
-
-            #### 2. 床邊胸部輕壓測試 (Gentle Chest Compression Test)
-            * **操作方式**：在 VCV 被動通氣下，於病患胸壁或上腹部給予持續輕壓（Sustained Gentle Compression），暫時減少肺容積。
-            * **生理學與壓力悖論 (Pressure Paradox)**：一般正常/未過度充氣的肺部，外加胸壁負載會使 $P_{	ext{plat}}$ 與驅動壓 $\Delta P$ 向上升高；然而，對 **已過度膨脹的肺部**（如上圖 D），輕壓胸部減少了過度充氣的肺容積，解除了肺泡僵硬區，反而使平台壓 $P_{	ext{plat}}$ 與驅動壓 $\Delta P$ **「悖論性顯著下降 (Paradoxical Decrease)」**！床邊出現此現象即證實存在過度膨脹，提示應調低 PEEP 或潮氣容積。
-            """, unsafe_allow_html=True)
-
         has_aop = st.checkbox("病患有氣道關閉 (Airway Closure)，需啟用 AOP 校正", key="has_aop_t2")
         aop_val = 0.0
         if has_aop:
