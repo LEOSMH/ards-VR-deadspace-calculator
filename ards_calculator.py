@@ -724,8 +724,12 @@ def run_streamlit():
             ### 📙 第二篇：超越指引之床邊生理個人化調校
             > 📄 **Wongtirawit N, Brochard L, et al.** *ARDS management beyond the guidelines: a practical physiology-based approach to individualized care.* **Intensive Care Medicine** (2026).
 
-            #### 🗺️ Wongtirawit 2026 Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖
+            1. **插管後第一小時 VCV 穩定流程 (First-Hour Roadmap)**：
+               * **模式首選**：被動通氣下首選 **容積控制通氣 (VCV)**，方便持續量測 $P_{\text{plat}}$ 與 $\Delta P$。
+               * **通氣強度 (Ventilation Intensity)**：若需調高呼吸速率以排除 $CO_2$，應評估 $4 \times \Delta P + RR$；$\Delta P$ 增加 $1 \text{ cmH}_2\text{O}$ 對肺損傷的負擔相當於呼吸速率增加 $4 \text{ bpm}$。
             """, unsafe_allow_html=True)
+
+            st.markdown("##### 🗺️ Wongtirawit 2026 Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖")
             
             # Insert image check for flowchart
             if os.path.exists("202608ICM_ET_flowchart.png"):
@@ -740,9 +744,6 @@ def run_streamlit():
                 st.image("first_hour_roadmap.png", caption="Wongtirawit 2026 (ICM) Fig 2: 新插管 ARDS 病患第一小時處置與 PEEP/Prone 決策流程圖", use_container_width=True)
 
             st.markdown(r"""
-            1. **插管後第一小時 VCV 穩定流程 (First-Hour Roadmap)**：
-               * **模式首選**：被動通氣下首選 **容積控制通氣 (VCV)**，方便持續量測 $P_{\text{plat}}$ 與 $\Delta P$。
-               * **通氣強度 (Ventilation Intensity)**：若需調高呼吸速率以排除 $CO_2$，應評估 $4 \times \Delta P + RR$；$\Delta P$ 增加 $1 \text{ cmH}_2\text{O}$ 對肺損傷的負擔相當於呼吸速率增加 $4 \text{ bpm}$。
             2. **高驅動壓 ($\Delta P$) 床邊鑑別與排除**：
                * **排除氣道關閉 (Airway Closure)**：測量氣道開啟壓 ($AOP$)，若 $PEEP < AOP$，真正的驅動壓為 $P_{\text{plat}} - AOP$。
                * **排除肺過度膨脹 (Overdistension / Hyperinflation)**：
@@ -1193,18 +1194,6 @@ def run_streamlit():
         
         # Collapsible Math Formulas for R/I Ratio with Conceptual Derivation & Image
         with st.expander("📐 點此展開／折疊查看 R/I Ratio 核心計算生理公式、概念推導與波形拆解圖 (Wongtirawit 2026 Fig 4)", expanded=False):
-            # Display RI ratio.png image inside formula expander
-            if os.path.exists("RI ratio.png"):
-                st.image("RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-            elif os.path.exists("/workspace/RI ratio.png"):
-                st.image("/workspace/RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-            elif os.path.exists("RI_ratio.png"):
-                st.image("RI_ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-            else:
-                if not os.path.exists("ri_ratio_diagram.png"):
-                    generate_ri_ratio_png("ri_ratio_diagram.png")
-                st.image("ri_ratio_diagram.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
-
             st.markdown(r"""
             #### 🧬 核心生理概念定義：兩個順應性 (Compliance) 的比值
             在 Chen L & Brochard L (2020 AJRCCM) 的原始研究中，**R/I Ratio 的本質就是「復張肺順應性」與「已充氣肺順應性」的比值**：
@@ -1233,6 +1222,18 @@ def run_streamlit():
 
             *(當比值 $\ge 0.5$ 時，代表高 PEEP 救回之肺泡順應性已達原本開放肺泡順應性的 50% 以上，定義為高可復張性 High Recruiter)*。
             """, unsafe_allow_html=True)
+
+            # Display RI ratio.png image below item 4 formula
+            if os.path.exists("RI ratio.png"):
+                st.image("RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+            elif os.path.exists("/workspace/RI ratio.png"):
+                st.image("/workspace/RI ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+            elif os.path.exists("RI_ratio.png"):
+                st.image("RI_ratio.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
+            else:
+                if not os.path.exists("ri_ratio_diagram.png"):
+                    generate_ri_ratio_png("ri_ratio_diagram.png")
+                st.image("ri_ratio_diagram.png", caption="R/I Ratio 呼氣單步降壓生理波形與肺容積拆解示意圖 (Wongtirawit 2026 Fig 4)", use_container_width=True)
 
         # Collapsible Bedside Operation Guide (No Image)
         with st.expander("📋 點此展開／折疊查看 R/I Ratio 床邊詳細操作步驟 (Step-by-Step Guide)", expanded=False):
