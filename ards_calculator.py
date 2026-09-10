@@ -618,7 +618,7 @@ def run_streamlit():
     """, unsafe_allow_html=True)
     
     st.markdown('<div class="main-title">🫁 ARDS 精準生理監測與生物亞型大師級計算器</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitle">整合 R/I Ratio、AOP 校正驅動壓、通氣強度、自主呼吸 efforts 與發炎表型評估<br>👨‍⚕️ <b>作者：台大醫院呼吸治療師 辛明翰</b> | 📅 初版日期：2026/09/04 | 🔄 最新修訂：2026/09/09</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">整合 R/I Ratio、AOP 校正驅動壓、通氣強度、自主呼吸 efforts 與發炎表型評估<br>👨‍⚕️ <b>作者：台大醫院呼吸治療師 辛明翰</b> | 📅 初版日期：2026/09/04 | 🔄 最新修訂：2026/09/10</div>', unsafe_allow_html=True)
     
     # 5 Tabs Setup - Sinha Phenotype moved to Tab 1 (immediately after Tab 0)
     tab0, tab1, tab2, tab3, tab4 = st.tabs([
@@ -1218,19 +1218,35 @@ def run_streamlit():
         使用 **R/I Ratio 呼氣單步降壓法**，可以幫助醫師在床邊 10 秒內區分出病患屬於 **「高復張性」** 還是 **「低復張性」** 亞型，避免造成嚴重肺部過度充氣與右心後負荷增加。\n
         """)
         
-        # Collapsible Math Formulas for R/I Ratio
-        with st.expander("📐 點此展開／折疊查看 R/I Ratio 核心計算生理公式", expanded=False):
+        # Collapsible Math Formulas for R/I Ratio with Conceptual Derivation
+        with st.expander("📐 點此展開／折疊查看 R/I Ratio 核心計算生理公式與概念推導 (C_rec / C_low)", expanded=False):
             st.markdown(r"""
-            1. **低 PEEP 靜態順應性**: 
-               $$C_{\text{low}} = \frac{Vt_{\text{low}}}{P_{\text{plat,low}} - PEEP_{\text{low}}}$$
-            2. **單步降壓之總呼氣末肺容積變化量**: 
-               $$\Delta EELV = V_{\text{exp,total}} - Vt_{\text{high}}$$
-            3. **預期未復張之充氣肺泡容積**: 
-               $$V_{\text{predicted}} = C_{\text{low}} \times (PEEP_{\text{high}} - PEEP_{\text{low}})$$
-            4. **高 PEEP 真正復張(救回)的肺泡容積**: 
-               $$V_{\text{recruited}} = \Delta EELV - V_{\text{predicted}}$$
-            5. **最終 R/I Ratio 比值**: 
-               $$R/I \text{ Ratio} = \frac{V_{\text{recruited}}}{(PEEP_{\text{high}} - PEEP_{\text{low}}) \times C_{\text{low}}}$$
+            #### 🧬 核心生理概念定義：兩個順應性 (Compliance) 的比值
+            在 Chen L & Brochard L (2020 AJRCCM) 的原始研究中，**R/I Ratio 的本質就是「復張肺順應性」與「已充氣肺順應性」的比值**：
+            $$\text{R/I Ratio} = \frac{C_{\text{rec}}}{C_{\text{low}}}$$
+
+            * **$C_{\text{low}}$ (低 PEEP 已充氣肺泡之順應性 / Inflation Compliance)**：
+              反映通氣開始時，原本就已開放（Aerated）的肺泡單位在低 PEEP 下的彈性順應性：
+              $$C_{\text{low}} = \frac{Vt_{\text{low}}}{P_{\text{plat,low}} - PEEP_{\text{low}}}$$
+
+            * **$C_{\text{rec}}$ (高 PEEP 真正復張/救回肺泡之順應性 / Recruited Compliance)**：
+              反映調高 PEEP 後，**新救回（Recruited）塌陷肺泡**每增加單位壓力所獲得的肺容積：
+              $$C_{\text{rec}} = \frac{V_{\text{recruited}}}{\Delta PEEP}$$
+
+            ---
+
+            #### 📐 床邊實測公式推導歷程：
+            將 $C_{\text{rec}} = \frac{V_{\text{recruited}}}{\Delta PEEP}$ 代入最原始的概念定義 $\frac{C_{\text{rec}}}{C_{\text{low}}}$ 中：
+            $$\text{R/I Ratio} = \frac{C_{\text{rec}}}{C_{\text{low}}} = \frac{\frac{V_{\text{recruited}}}{\Delta PEEP}}{C_{\text{low}}} = \frac{V_{\text{recruited}}}{\Delta PEEP \times C_{\text{low}}}$$
+
+            在床邊單步降壓測試（One-Breath Drop）中，進一步將 $V_{\text{recruited}}$ 拆解為實測可得的參數：
+            1. **單步降壓總呼氣末肺容積變化**: $\Delta EELV = V_{\text{exp,total}} - Vt_{\text{high}}$
+            2. **預期未復張之已充氣肺泡容積**: $V_{\text{predicted}} = C_{\text{low}} \times (PEEP_{\text{high}} - PEEP_{\text{low}})$
+            3. **高 PEEP 真正復張(救回)的肺泡容積**: $V_{\text{recruited}} = \Delta EELV - V_{\text{predicted}}$
+            4. **床邊最終計算公式**:
+               $$\text{R/I Ratio} = \frac{V_{\text{recruited}}}{(PEEP_{\text{high}} - PEEP_{\text{low}}) \times C_{\text{low}}}$$
+
+            *(當比值 $\ge 0.5$ 時，代表高 PEEP 救回之肺泡順應性已達原本開放肺泡順應性的 50% 以上，定義為高可復張性 High Recruiter)*。
             """, unsafe_allow_html=True)
 
         # Collapsible Bedside Operation Guide & Diagram
