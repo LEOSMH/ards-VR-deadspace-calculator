@@ -614,6 +614,20 @@ def run_streamlit():
         font-size: 13px;
         color: #2c3e50;
     }
+    
+    /* Enhanced Expander Header Styles for conspicuous display */
+    div[data-testid="stExpander"] summary p {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        color: #1a5276 !important;
+    }
+    div[data-testid="stExpander"] {
+        border: 1.5px solid #b3cee5 !important;
+        border-radius: 8px !important;
+        background-color: #f7fbfd !important;
+        margin-top: 12px !important;
+        margin-bottom: 15px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
     
@@ -700,6 +714,7 @@ def run_streamlit():
         """, unsafe_allow_html=True)
 
         st.markdown("---")
+        st.subheader("📚 2026 ICM 最新重症文獻處置與生理管理精粹")
         with st.expander("🩺 點此展開／折疊查看 2026 最新核心文獻之處置重點與生理個人化管理精粹 (ICM 2026)", expanded=False):
             st.markdown(r"""
             ### 📘 第一篇：核心醫療處置與指引框架
