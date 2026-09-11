@@ -615,17 +615,31 @@ def run_streamlit():
         color: #2c3e50;
     }
     
-    /* Enhanced Expander Header Styles for conspicuous display */
+    /* Default Standard Expander Styling for clean clinical UI */
     div[data-testid="stExpander"] summary p {
-        font-size: 18px !important;
+        font-size: 14.5px !important;
+        font-weight: 600 !important;
+        color: #2c3e50 !important;
+    }
+    div[data-testid="stExpander"] {
+        border: 1px solid #dcdfe6 !important;
+        border-radius: 6px !important;
+        background-color: #fafafa !important;
+        margin-top: 8px !important;
+        margin-bottom: 12px !important;
+    }
+
+    /* Featured Conspicuous Expander Header Styles (specifically for Tab 0 Literature Summary) */
+    .featured-expander div[data-testid="stExpander"] summary p {
+        font-size: 17.5px !important;
         font-weight: 700 !important;
         color: #1a5276 !important;
     }
-    div[data-testid="stExpander"] {
-        border: 1.5px solid #b3cee5 !important;
+    .featured-expander div[data-testid="stExpander"] {
+        border: 1.8px solid #3498db !important;
         border-radius: 8px !important;
-        background-color: #f7fbfd !important;
-        margin-top: 12px !important;
+        background-color: #f0f7fc !important;
+        margin-top: 10px !important;
         margin-bottom: 15px !important;
     }
     </style>
@@ -715,6 +729,7 @@ def run_streamlit():
 
         st.markdown("---")
         st.subheader("📚 2026 ICM 最新重症文獻處置與生理管理精粹")
+        st.markdown('<div class="featured-expander">', unsafe_allow_html=True)
         with st.expander("🩺 點此展開／折疊查看 2026 最新核心文獻之處置重點與生理個人化管理精粹 (ICM 2026)", expanded=False):
             st.markdown(r"""
             ### 📘 第一篇：核心醫療處置與指引框架
@@ -794,6 +809,7 @@ def run_streamlit():
                * **病態性肥胖 (Obesity)**：高胸壁重量導致胸膜壓升高。應評估 $AOP$，可利用食道壓導管（Esophageal Manometry）滴定 PEEP，鎖定 **呼氣末跨肺壓 $TPP \approx 0 \pm 2 \text{ cmH}_2\text{O}$**（此時 PEEP 設至 $20 \text{ cmH}_2\text{O}$ 亦安全）。
                * **ECMO 體外膜氧合**：採超保護肺通氣 ($V_t < 4 \text{ mL/kg}$，$\Delta P$ 極低)，適度維持 PEEP (10–15) 防範全肺塌陷，並透過調整掃氣流速（Sweep gas）控制患者呼吸驅力。
             """, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
         st.markdown("---")
