@@ -560,87 +560,182 @@ def run_streamlit():
         layout="centered"
     )
     
-    # Custom CSS for clinical layout
+        # Custom CSS for clinical layout (Universal Light & Dark Mode Compatible)
     st.markdown("""
     <style>
+    /* =========================================================
+       1. Base Typography & Titles
+       ========================================================= */
     .main-title {
         font-size: 26px;
         font-weight: bold;
-        color: #2c3e50;
+        color: var(--text-color, #2c3e50);
         text-align: center;
         margin-bottom: 5px;
     }
     .subtitle {
         font-size: 14px;
-        color: #7f8c8d;
+        color: var(--text-color, #7f8c8d);
+        opacity: 0.85;
         text-align: center;
         margin-bottom: 25px;
     }
+
+    /* =========================================================
+       2. Metric Containers & Cards
+       ========================================================= */
     .metric-container {
-        background-color: #f8f9fa;
+        background-color: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
         padding: 15px;
         border-radius: 10px;
-        border: 1px solid #e9ecef;
+        border: 1px solid rgba(128, 128, 128, 0.2);
         text-align: center;
         margin-bottom: 10px;
     }
     .metric-value {
         font-size: 30px;
         font-weight: bold;
-        color: #2c3e50;
+        color: var(--text-color, #2c3e50);
     }
     .metric-label {
         font-size: 13px;
-        color: #7f8c8d;
+        color: var(--text-color, #7f8c8d);
+        opacity: 0.8;
         font-weight: 500;
     }
+
+    /* =========================================================
+       3. Warning & Alert Callout Boxes (High Contrast White Text)
+       ========================================================= */
     .warning-box {
         padding: 20px;
         border-radius: 10px;
-        color: white;
+        color: #ffffff !important;
         margin-top: 15px;
         margin-bottom: 15px;
     }
+    .warning-box h1, .warning-box h2, .warning-box h3, .warning-box h4, 
+    .warning-box p, .warning-box li, .warning-box strong, .warning-box span {
+        color: #ffffff !important;
+    }
+
+    /* =========================================================
+       4. Formula & Step Guide Callout Boxes
+       ========================================================= */
     .tab-content {
         padding-top: 15px;
     }
     .formula-box {
-        background-color: #f1f2f6;
+        background-color: rgba(52, 152, 219, 0.08);
         padding: 12px;
         border-radius: 8px;
         border-left: 5px solid #3498db;
         font-family: monospace;
         margin-bottom: 15px;
         font-size: 13px;
-        color: #2c3e50;
+        color: var(--text-color, inherit);
     }
-    
-    /* Default Standard Expander Styling for clean clinical UI */
-    div[data-testid="stExpander"] summary p {
-        font-size: 14.5px !important;
-        font-weight: 600 !important;
-        color: #2c3e50 !important;
+    .step-guide-box {
+        background-color: rgba(41, 128, 185, 0.08);
+        padding: 18px;
+        border-radius: 8px;
+        border-left: 5px solid #2980b9;
+        margin-bottom: 20px;
+        color: var(--text-color, inherit);
     }
+    .step-guide-box p, .step-guide-box ol, .step-guide-box li, .step-guide-box strong {
+        color: var(--text-color, inherit);
+    }
+    .step-guide-header {
+        font-size: 15px;
+        font-weight: 600;
+        color: #2980b9 !important;
+        margin-top: 0;
+    }
+
+    /* =========================================================
+       5. Standard Expanders (`st.expander`) - Theme Adaptive
+       ========================================================= */
     div[data-testid="stExpander"] {
-        border: 1px solid #dcdfe6 !important;
-        border-radius: 6px !important;
-        background-color: #fafafa !important;
+        border: 1px solid rgba(52, 152, 219, 0.35) !important;
+        border-radius: 8px !important;
+        background-color: var(--secondary-background-color, rgba(128, 128, 128, 0.05)) !important;
         margin-top: 8px !important;
         margin-bottom: 12px !important;
     }
+    div[data-testid="stExpander"] summary {
+        border-radius: 8px !important;
+    }
+    div[data-testid="stExpander"] summary p {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        color: var(--text-color, inherit) !important;
+    }
+    div[data-testid="stExpander"] div[role="region"] {
+        background-color: transparent !important;
+        color: var(--text-color, inherit) !important;
+    }
+    div[data-testid="stExpander"] div[role="region"] p,
+    div[data-testid="stExpander"] div[role="region"] li,
+    div[data-testid="stExpander"] div[role="region"] span,
+    div[data-testid="stExpander"] div[role="region"] strong,
+    div[data-testid="stExpander"] div[role="region"] td,
+    div[data-testid="stExpander"] div[role="region"] th,
+    div[data-testid="stExpander"] div[role="region"] h1,
+    div[data-testid="stExpander"] div[role="region"] h2,
+    div[data-testid="stExpander"] div[role="region"] h3,
+    div[data-testid="stExpander"] div[role="region"] h4 {
+        color: var(--text-color, inherit);
+    }
 
-    /* Featured Conspicuous Expander Header Styles (specifically for Tab 0 Literature Summary) */
+    /* =========================================================
+       6. Featured Conspicuous Expander (Tab 0 Literature Summary)
+       ========================================================= */
+    .featured-expander div[data-testid="stExpander"] {
+        border: 2px solid #3498db !important;
+        border-radius: 10px !important;
+        background-color: rgba(52, 152, 219, 0.08) !important;
+        margin-top: 10px !important;
+        margin-bottom: 15px !important;
+    }
     .featured-expander div[data-testid="stExpander"] summary p {
         font-size: 17.5px !important;
         font-weight: 700 !important;
-        color: #1a5276 !important;
+        color: #2980b9 !important;
     }
-    .featured-expander div[data-testid="stExpander"] {
-        border: 1.8px solid #3498db !important;
-        border-radius: 8px !important;
-        background-color: #f0f7fc !important;
-        margin-top: 10px !important;
-        margin-bottom: 15px !important;
+
+    /* =========================================================
+       7. Dark Mode Specific Overrides
+       ========================================================= */
+    @media (prefers-color-scheme: dark) {
+        .main-title {
+            color: #f3f9fe !important;
+        }
+        div[data-testid="stExpander"] {
+            border-color: rgba(56, 189, 248, 0.4) !important;
+            background-color: rgba(30, 41, 59, 0.6) !important;
+        }
+        div[data-testid="stExpander"] summary p {
+            color: #38bdf8 !important;
+        }
+        .featured-expander div[data-testid="stExpander"] {
+            border-color: #38bdf8 !important;
+            background-color: rgba(14, 116, 144, 0.25) !important;
+        }
+        .featured-expander div[data-testid="stExpander"] summary p {
+            color: #38bdf8 !important;
+        }
+        .step-guide-box {
+            background-color: rgba(14, 116, 144, 0.2) !important;
+            border-left-color: #38bdf8 !important;
+        }
+        .step-guide-header {
+            color: #38bdf8 !important;
+        }
+        .formula-box {
+            background-color: rgba(14, 116, 144, 0.2) !important;
+            border-left-color: #38bdf8 !important;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -929,7 +1024,7 @@ def run_streamlit():
         prob_pct = prob * 100.0
         
         st.markdown(f"""
-        <div class="metric-container" style="background-color: #f1f2f6;">
+        <div class="metric-container">
             <div class="metric-label">高發炎亞型 (Type 2 / Hyper-inflammatory) 預估機率</div>
             <div class="metric-value" style="color: {'#e74c3c' if prob >= 0.5 else '#2ebd59'};">{prob_pct:.1f} %</div>
             <div style="font-size: 11px; color:#7f8c8d;">臨床判定切點為 50.0%</div>
@@ -1272,9 +1367,9 @@ def run_streamlit():
         with st.expander("📋 點此展開／折疊查看 R/I Ratio 床邊詳細操作步驟 (Step-by-Step Guide)", expanded=False):
 
             st.markdown(r"""
-            <div style="background-color: #f0f7fc; padding: 18px; border-radius: 8px; border-left: 5px solid #2980b9; margin-bottom: 20px;">
-                <p style="margin-top:0; font-size:15px; font-weight:600; color:#2980b9;">🛠️ 呼氣單步降壓法 (One-Breath PEEP Reduction) 執行步驟：</p>
-                <ol style="margin-bottom:8px; font-size:13px; line-height:1.6; color:#2c3e50; padding-left:20px;">
+            <div class="step-guide-box">
+                <p class="step-guide-header">🛠️ 呼氣單步降壓法 (One-Breath PEEP Reduction) 執行步驟：</p>
+                <ol style="margin-bottom:8px; font-size:13px; line-height:1.6; padding-left:20px;">
                     <li><strong>高壓穩定階段 (PEEPhigh Stabilization)</strong>：將病患呼吸器之 PEEP 設為高水平 (通常設定為 <b>15 cmH₂O</b>)，並穩定通氣 <b>10 分鐘</b>，使肺泡充分復張並達到穩態。</li>
                     <li><strong>防氣體陷縮 & 記錄基準潮氣量</strong>：短暫將呼吸速率 (RR) 調降至 <b>6–8 bpm</b> (進行 1-2 次呼吸)，以完全排除氣道捕獲氣體 (Air trapping / Auto-PEEP)。記錄此時的呼出潮氣容積 <b>Vt_high</b> ($VTe_{\text{high}}$，如 450 mL)。</li>
                     <li><strong>單步突發降壓 (One-Breath Drop)</strong>：在<b>單次吐氣開始時</b>，將 PEEP 瞬間調降至低水平 (通常設定為 <b>5 cmH₂O</b>)。此時病患會因為 sudden drop 而吐出一口極大的氣體。</li>
@@ -1282,8 +1377,8 @@ def run_streamlit():
                     <li><strong>低壓生理力學量測 (PEEPlow Mechanics)</strong>：讓患者在低 PEEP 水平穩定呼吸 2-3 次。短暫按下「吸氣阻斷鍵 (Inspiratory Hold) 0.2-0.3 秒」測量低 PEEP 下的平台壓 <b>Pplat_low</b> 與呼出潮氣 <b>Vt_low</b>。</li>
                     <li><strong>輸入參數計算</strong>：將上述測得之 6 個數值代入下方對應之輸入欄位中，一秒取得您的 R/I Ratio 報告！</li>
                 </ol>
-                <hr style="border-top: 1px solid rgba(41, 128, 185, 0.2); margin: 10px 0;">
-                <p style="margin-bottom:0; font-size:12px; line-height:1.5; color:#2c3e50;">
+                <hr style="border-top: 1px solid rgba(41, 128, 185, 0.3); margin: 10px 0;">
+                <p style="margin-bottom:0; font-size:12px; line-height:1.5;">
                     ⚠️ <b>AOP 關鍵提醒 (Airway Opening Pressure)</b>：<br>
                     在執行 R/I 測試前，強烈建議先進行低流速吸氣量測 AOP。如果病患的 <b>AOP 高於 PEEPlow</b> (例如 AOP 為 8 cmH₂O，而您設定之 PEEPlow 為 5 cmH₂O)，<b>您必須使用 AOP 作為 PEEPlow</b> 代替 5 cmH₂O！否則，在降壓時氣道會提前完全關閉，導致順應性與 R/I Ratio 算得嚴重失真。
                 </p>
@@ -1461,7 +1556,7 @@ def run_streamlit():
             dp_occ_color = "#2ebd59" if dp_occ >= -20.0 else "#e74c3c"
             
             st.markdown(f"""
-            <div class="metric-container" style="background-color: #f8f9fa;">
+            <div class="metric-container">
                 <div class="metric-label">P0.1 呼吸驅力</div>
                 <div class="metric-value" style="color: {p01_color};">{p01:.1f} cmH2O</div>
                 <div style="font-size: 11px; color:#7f8c8d;">安全切點: &lt; 3.5 cmH2O | 狀態: <strong>{p01_status}</strong></div>
@@ -1469,7 +1564,7 @@ def run_streamlit():
             """, unsafe_allow_html=True)
             
             st.markdown(f"""
-            <div class="metric-container" style="background-color: #f8f9fa;">
+            <div class="metric-container">
                 <div class="metric-label">ΔPocc 遮斷努力值</div>
                 <div class="metric-value" style="color: {dp_occ_color};">{dp_occ:.1f} cmH2O</div>
                 <div style="font-size: 11px; color:#7f8c8d;">安全切點: &ge; -20 cmH2O | 狀態: <strong>{dp_occ_status}</strong></div>
@@ -1477,7 +1572,7 @@ def run_streamlit():
             """, unsafe_allow_html=True)
             
             st.markdown(f"""
-            <div class="metric-container" style="background-color: #f8f9fa;">
+            <div class="metric-container">
                 <div class="metric-label">PMI (Pressure Muscle Index)</div>
                 <div class="metric-value">{pmi:.1f} cmH2O</div>
                 <div style="font-size: 11px; color:#7f8c8d;">PMI &gt; 3 代表病患自主吸氣做功過大</div>
