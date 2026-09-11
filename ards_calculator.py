@@ -562,7 +562,7 @@ def run_streamlit():
     
         # Custom CSS for clinical layout (Universal Light & Dark Mode Compatible)
     st.markdown("""
-    <style>
+        <style>
     /* =========================================================
        1. Base Typography & Titles
        ========================================================= */
@@ -626,7 +626,7 @@ def run_streamlit():
         padding-top: 15px;
     }
     .formula-box {
-        background-color: rgba(52, 152, 219, 0.08);
+        background-color: var(--secondary-background-color, rgba(52, 152, 219, 0.08));
         padding: 12px;
         border-radius: 8px;
         border-left: 5px solid #3498db;
@@ -636,7 +636,7 @@ def run_streamlit():
         color: var(--text-color, inherit);
     }
     .step-guide-box {
-        background-color: rgba(41, 128, 185, 0.08);
+        background-color: var(--secondary-background-color, rgba(41, 128, 185, 0.08));
         padding: 18px;
         border-radius: 8px;
         border-left: 5px solid #2980b9;
@@ -657,7 +657,7 @@ def run_streamlit():
        5. Standard Expanders (`st.expander`) - Theme Adaptive
        ========================================================= */
     div[data-testid="stExpander"] {
-        border: 1px solid rgba(52, 152, 219, 0.35) !important;
+        border: 1.5px solid rgba(52, 152, 219, 0.35) !important;
         border-radius: 8px !important;
         background-color: var(--secondary-background-color, rgba(128, 128, 128, 0.05)) !important;
         margin-top: 8px !important;
@@ -694,7 +694,7 @@ def run_streamlit():
     .featured-expander div[data-testid="stExpander"] {
         border: 2px solid #3498db !important;
         border-radius: 10px !important;
-        background-color: rgba(52, 152, 219, 0.08) !important;
+        background-color: var(--secondary-background-color, rgba(52, 152, 219, 0.08)) !important;
         margin-top: 10px !important;
         margin-bottom: 15px !important;
     }
@@ -702,40 +702,6 @@ def run_streamlit():
         font-size: 17.5px !important;
         font-weight: 700 !important;
         color: #2980b9 !important;
-    }
-
-    /* =========================================================
-       7. Dark Mode Specific Overrides
-       ========================================================= */
-    @media (prefers-color-scheme: dark) {
-        .main-title {
-            color: #f3f9fe !important;
-        }
-        div[data-testid="stExpander"] {
-            border-color: rgba(56, 189, 248, 0.4) !important;
-            background-color: rgba(30, 41, 59, 0.6) !important;
-        }
-        div[data-testid="stExpander"] summary p {
-            color: #38bdf8 !important;
-        }
-        .featured-expander div[data-testid="stExpander"] {
-            border-color: #38bdf8 !important;
-            background-color: rgba(14, 116, 144, 0.25) !important;
-        }
-        .featured-expander div[data-testid="stExpander"] summary p {
-            color: #38bdf8 !important;
-        }
-        .step-guide-box {
-            background-color: rgba(14, 116, 144, 0.2) !important;
-            border-left-color: #38bdf8 !important;
-        }
-        .step-guide-header {
-            color: #38bdf8 !important;
-        }
-        .formula-box {
-            background-color: rgba(14, 116, 144, 0.2) !important;
-            border-left-color: #38bdf8 !important;
-        }
     }
     </style>
     """, unsafe_allow_html=True)
