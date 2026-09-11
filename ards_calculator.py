@@ -711,12 +711,12 @@ def run_streamlit():
     
     # 5 Tabs Setup - Sinha Phenotype moved to Tab 1 (immediately after Tab 0)
     tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "ℹ️ ARDS 臨床簡介與最新指引",
-        "🧬 1. ARDS 生物亞型預測 (Sinha 2020)",
+        "ℹ️ 指引簡介",
+        "🧬 1. 生物亞型預測",
         "🫁 2. 呼吸力學與通氣效率", 
-        "🔄 3. 肺可復張性評估 (R/I Ratio)", 
-        "🧠 4. 自主呼吸 efforts 與驅力監測",
-        "📚 5. ARDS 關鍵臨床試驗總覽 (Landmark Trials)"
+        "🔄 3. 肺復張性評估(R/I)", 
+        "🧠 4. 呼吸 efforts 與驅力",
+        "📚 5. ARDS Trials總整理"
     ])
     
 
