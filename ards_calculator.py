@@ -26,7 +26,7 @@ def calculate_vr(ve, paco2, pbw):
     """Calculate Ventilatory Ratio (VR)."""
     if pbw <= 0:
         return 0
-    return (ve * paco2) / (3.75 * pbw)
+    return (ve * paco2) / (pbw * 0.1 * 37.5)
 
 def estimate_vd_vt(vr):
     """Estimate Physiological Dead-Space Fraction (Vd/Vt) from VR."""
@@ -1074,7 +1074,7 @@ def run_streamlit():
             st.latex(r"\text{PBW (女)} = 45.5 + 0.91 \times (\text{身高 cm} - 152.4)")
 
             st.markdown("#### 2. 通氣比例 (Ventilatory Ratio, VR) 公式 (Sinha 2019 AJRCCM)")
-            st.latex(r"\text{VR} = \frac{V_E \times PaCO_2}{\text{Predicted } V_E \times \text{Predicted } PaCO_2} = \frac{V_E \times PaCO_2}{3.75 \times \text{PBW}}")
+            st.latex(r"\text{VR} = \frac{V_E \times PaCO_2}{\text{Predicted } V_E \times \text{Predicted } PaCO_2} = \frac{V_E \times PaCO_2}{\text{PBW} \times 0.1 \times 37.5}")
 
             st.markdown("#### 3. 預估生理死腔比例 ($V_d/V_t$) 估算公式")
             st.latex(r"V_d/V_t = 1.0 - \frac{0.70}{\text{VR}} \quad (\text{若 } \text{VR} \le 0.7\text{，則底限設為 } 0.30)")
@@ -1091,8 +1091,9 @@ def run_streamlit():
             )
 
             st.markdown(
-                "• **關於預測 $PaCO_2$ ($37.5\\text{ mmHg}$) 論文精準標準：**\n"
-                "  Sinha 2019 AJRCCM 原始論文採用國際標準 $5.0\\text{ kPa} = 37.5\\text{ mmHg}$，搭配預估通氣量 $100\\text{ mL/kg/min} \\times \\text{PBW}$。經單位換算後，分母之精準係數為 **$3.75 \\times \\text{PBW}$**（$\\frac{1000}{100 \\times 37.5} = \\frac{1}{3.75}$）。本計算器已完全遵照原始論文標準，採用 $3.75 \\times \\text{PBW}$ 進行精準計算！"
+                "• **關於預測通氣分母 $(\\text{PBW} \\times 0.1 \\times 37.5)$ 拆解說明：**\n"
+                "  Sinha 2019 AJRCCM 原始論文以預估分鐘通氣量 $\\text{Predicted } V_E = 100\\text{ mL/kg/min} \\times \\text{PBW} = (\\text{PBW} \\times 0.1\\text{ L/min})$，搭配預期理想二氧化碳分壓 $\\text{Predicted } PaCO_2 = 5.0\\text{ kPa} = 37.5\\text{ mmHg}$。\n"
+                "  因此公式分母即為 **$\\text{PBW} \\times 0.1 \\times 37.5$**。這樣的表達方式完美對應生理學定義：前半段（$\\text{PBW} \\times 0.1$）為理想分鐘通氣量，後半段（$37.5$）為預期的理想 $PaCO_2$，邏輯最為直觀且不抽象！"
             )
 
         st.subheader("🎛️ 輸入呼吸器與力學參數")
