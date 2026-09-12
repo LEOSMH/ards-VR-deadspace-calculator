@@ -1,0 +1,16 @@
+{
+  "short_name": "ARDS計算機",
+  "name": "ARDS & Deadspace 臨床計算機",
+  "icons": [
+    {
+      "src": "https://githubusercontent.com",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#ffffff",
+  "theme_color": "#ff4b4b",
+  "display": "standalone",
+  "orientation": "portrait"
+}
