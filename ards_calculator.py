@@ -748,7 +748,7 @@ def run_streamlit():
     # 5 Tabs Setup - Sinha Phenotype moved to Tab 1 (immediately after Tab 0)
     tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "ℹ️ 指引簡介",
-        "🧬 1. 生物亞型預測",
+        "🧬 1. 生物亞型預測(phenotype)",
         "🫁 2. 呼吸力學與通氣效率", 
         "🔄 3. 肺復張性評估(R/I)", 
         "🧠 4. 呼吸 efforts 與驅力",
