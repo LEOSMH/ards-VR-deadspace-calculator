@@ -17,13 +17,29 @@ import streamlit.components.v1 as components
 components.html(
     """
     <script>
-    // 1. 建立並連結至 manifest.json
+    // 1. 強迫注入蘋果專用的全螢幕與標題標籤 (iOS 專用)
+    var metaCapable = window.parent.document.createElement('meta');
+    metaCapable.name = 'apple-mobile-web-app-capable';
+    metaCapable.content = 'yes';
+    window.parent.document.getElementsByTagName('head')[0].appendChild(metaCapable);
+
+    var metaStatus = window.parent.document.createElement('meta');
+    metaStatus.name = 'apple-mobile-web-app-status-bar-style';
+    metaStatus.content = 'black-translucent';
+    window.parent.document.getElementsByTagName('head')[0].appendChild(metaStatus);
+
+    var metaTitle = window.parent.document.createElement('meta');
+    metaTitle.name = 'apple-mobile-web-app-title';
+    metaTitle.content = 'ARDS計算機';
+    window.parent.document.getElementsByTagName('head')[0].appendChild(metaTitle);
+
+    // 2. 注入相容的 manifest
     var link = window.parent.document.createElement('link');
     link.rel = 'manifest';
     link.href = 'https://githubusercontent.com';
     window.parent.document.getElementsByTagName('head')[0].appendChild(link);
 
-    // 2. 註冊一個空的 Service Worker (這是 PWA 安裝檔案必備的通行證)
+    // 3. 註冊 Service Worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmdXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7IH0pOw==');
     }
@@ -31,7 +47,6 @@ components.html(
     """,
     height=0,
 )
-
 # ---------------------------------------------------------
 # Physiological Core Calculations
 # ---------------------------------------------------------
