@@ -10,6 +10,27 @@ Based on:
 
 import sys
 import math
+import streamlit as st
+import streamlit.components.v1 as components
+
+# 🚀 注入 PWA 語法，讓手機瀏覽器辨識為可安裝的手機 APP
+components.html(
+    """
+    <script>
+    // 1. 建立並連結至 manifest.json
+    var link = window.parent.document.createElement('link');
+    link.rel = 'manifest';
+    link.href = 'https://githubusercontent.com';
+    window.parent.document.getElementsByTagName('head')[0].appendChild(link);
+
+    // 2. 註冊一個空的 Service Worker (這是 PWA 安裝檔案必備的通行證)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmdXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7IH0pOw==');
+    }
+    </script>
+    """,
+    height=0,
+)
 
 # ---------------------------------------------------------
 # Physiological Core Calculations
