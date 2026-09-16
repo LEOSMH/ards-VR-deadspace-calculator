@@ -551,6 +551,36 @@ def generate_stressindex_chestcompress_png(out_path='stressindex_chestcompress.p
     except Exception as e:
         pass
 
+
+def get_visitor_count():
+    """Fetch and increment visitor count using CounterAPI with local persistent fallback."""
+    count = None
+    try:
+        import urllib.request, json
+        url = "https://api.counterapi.dev/v1/ards_calculator_taiwan_ntuh/visits/up"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=2) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            if "count" in res_data:
+                count = int(res_data["count"])
+    except Exception:
+        pass
+
+    if count is None:
+        try:
+            counter_file = "visitor_count.txt"
+            if os.path.exists(counter_file):
+                with open(counter_file, "r") as f:
+                    count = int(f.read().strip()) + 1
+            else:
+                count = 1258
+            with open(counter_file, "w") as f:
+                f.write(str(count))
+        except Exception:
+            count = 1258
+
+    return count
+
 def run_streamlit():
     import streamlit as st
     
@@ -755,7 +785,15 @@ def run_streamlit():
     
     st.markdown('<div class="main-title">🫁 ARDS 精準生理監測與生物亞型大師級計算器</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitle">整合 R/I Ratio、AOP 校正驅動壓、通氣強度、自主呼吸 efforts 與發炎表型評估<br>👨‍⚕️ <b>作者：台大醫院呼吸治療師 辛明翰</b> | 📅 初版日期：2026/09/04 | 🔄 最新修訂：2026/09/17</div>', unsafe_allow_html=True)
-    st.markdown('<div style="text-align: center; margin-top: -15px; margin-bottom: 20px;"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fards-vr-deadspace-calculator-cnef9rfpdr9579mnm9rccr.streamlit.app%2F&count_bg=%232980B9&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=App+Visitors&edge_flat=false" alt="App Visitors"/></div>', unsafe_allow_html=True)
+    visitor_count = get_visitor_count()
+    st.markdown(f"""
+    <div style="display: flex; justify-content: center; align-items: center; margin-top: -10px; margin-bottom: 25px;">
+        <div style="background: var(--secondary-background-color, rgba(41, 128, 185, 0.08)); border: 1px solid rgba(52, 152, 219, 0.35); border-radius: 20px; padding: 6px 20px; font-size: 13.5px; font-weight: 600; color: var(--text-color, #2c3e50); box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: inline-flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">👁️</span>
+            <span>累積總瀏覽人次：<strong style="color: #3498db; font-size: 15.5px;">{visitor_count:,}</strong> 次</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     # 5 Tabs Setup - Sinha Phenotype moved to Tab 1 (immediately after Tab 0)
     tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs([
