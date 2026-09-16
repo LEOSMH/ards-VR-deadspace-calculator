@@ -561,14 +561,48 @@ def run_streamlit():
     )
     
     # Embedded Google Analytics 4 (GA4) Tracking (Measurement ID: G-M64Q7FNW83)
+    # Uses dual strategy: parent DOM injection (for Streamlit SPA) + iframe fallback with SameSite cookies & page_location
     ga_html = """
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M64Q7FNW83"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-M64Q7FNW83');
+    (function() {
+        var gaId = 'G-M64Q7FNW83';
+        
+        // Strategy 1: Try injecting directly into parent window <head> (Bypasses iframe isolation in Streamlit)
+        try {
+            var pDoc = window.parent.document;
+            if (!pDoc.getElementById('ga-gtag-src')) {
+                var s = pDoc.createElement('script');
+                s.id = 'ga-gtag-src';
+                s.async = true;
+                s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+                pDoc.head.appendChild(s);
+
+                var s2 = pDoc.createElement('script');
+                s2.id = 'ga-gtag-init';
+                s2.text = "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '" + gaId + "', {'send_page_view': true});";
+                pDoc.head.appendChild(s2);
+            }
+        } catch(e) {
+            // Strategy 2: Fallback to iframe execution with explicit page_location & SameSite=None cookies
+            if (!window.dataLayer) {
+                var s = document.createElement('script');
+                s.async = true;
+                s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+                document.head.appendChild(s);
+
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                window.gtag = gtag;
+                gtag('js', new Date());
+                
+                var refUrl = document.referrer || window.location.href;
+                gtag('config', gaId, {
+                    'page_location': refUrl,
+                    'cookie_flags': 'max-age=7200;secure;samesite=none'
+                });
+            }
+        }
+    })();
     </script>
     """
     st.components.v1.html(ga_html, height=0, width=0)
@@ -721,7 +755,7 @@ def run_streamlit():
     
     st.markdown('<div class="main-title">🫁 ARDS 精準生理監測與生物亞型大師級計算器</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitle">整合 R/I Ratio、AOP 校正驅動壓、通氣強度、自主呼吸 efforts 與發炎表型評估<br>👨‍⚕️ <b>作者：台大醫院呼吸治療師 辛明翰</b> | 📅 初版日期：2026/09/04 | 🔄 最新修訂：2026/09/17</div>', unsafe_allow_html=True)
-    st.markdown('<div style="text-align: center; margin-top: -15px; margin-bottom: 20px;"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fards-calculator.streamlit.app&count_bg=%232980B9&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=App+Visitors&edge_flat=false" alt="App Visitors"/></div>', unsafe_allow_html=True)
+    st.markdown('<div style="text-align: center; margin-top: -15px; margin-bottom: 20px;"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fards-vr-deadspace-calculator-cnef9rfpdr9579mnm9rccr.streamlit.app%2F&count_bg=%232980B9&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=App+Visitors&edge_flat=false" alt="App Visitors"/></div>', unsafe_allow_html=True)
     
     # 5 Tabs Setup - Sinha Phenotype moved to Tab 1 (immediately after Tab 0)
     tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs([
