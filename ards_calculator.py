@@ -553,11 +553,11 @@ def generate_stressindex_chestcompress_png(out_path='stressindex_chestcompress.p
 
 
 def get_visitor_count():
-    """Fetch and increment visitor count using CounterAPI with local persistent fallback."""
+    """Fetch and increment visitor count using CounterAPI with local persistent fallback (starts from 1)."""
     count = None
     try:
         import urllib.request, json
-        url = "https://api.counterapi.dev/v1/ards_calculator_taiwan_ntuh/visits/up"
+        url = "https://api.counterapi.dev/v1/ards_calculator_ntuh_v2026/visits/up"
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=2) as response:
             res_data = json.loads(response.read().decode("utf-8"))
@@ -571,13 +571,14 @@ def get_visitor_count():
             counter_file = "visitor_count.txt"
             if os.path.exists(counter_file):
                 with open(counter_file, "r") as f:
-                    count = int(f.read().strip()) + 1
+                    val = f.read().strip()
+                    count = int(val) + 1 if val.isdigit() else 1
             else:
-                count = 1258
+                count = 1
             with open(counter_file, "w") as f:
                 f.write(str(count))
         except Exception:
-            count = 1258
+            count = 1
 
     return count
 
