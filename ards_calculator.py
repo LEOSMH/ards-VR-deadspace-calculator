@@ -10,43 +10,7 @@ Based on:
 
 import sys
 import math
-import streamlit as st
-import streamlit.components.v1 as components
 
-# 🚀 注入 PWA 語法，讓手機瀏覽器辨識為可安裝的手機 APP
-components.html(
-    """
-    <script>
-    // 1. 強迫注入蘋果專用的全螢幕與標題標籤 (iOS 專用)
-    var metaCapable = window.parent.document.createElement('meta');
-    metaCapable.name = 'apple-mobile-web-app-capable';
-    metaCapable.content = 'yes';
-    window.parent.document.getElementsByTagName('head')[0].appendChild(metaCapable);
-
-    var metaStatus = window.parent.document.createElement('meta');
-    metaStatus.name = 'apple-mobile-web-app-status-bar-style';
-    metaStatus.content = 'black-translucent';
-    window.parent.document.getElementsByTagName('head')[0].appendChild(metaStatus);
-
-    var metaTitle = window.parent.document.createElement('meta');
-    metaTitle.name = 'apple-mobile-web-app-title';
-    metaTitle.content = 'ARDS計算機';
-    window.parent.document.getElementsByTagName('head')[0].appendChild(metaTitle);
-
-    // 2. 注入相容的 manifest
-    var link = window.parent.document.createElement('link');
-    link.rel = 'manifest';
-    link.href = 'https://githubusercontent.com';
-    window.parent.document.getElementsByTagName('head')[0].appendChild(link);
-
-    // 3. 註冊 Service Worker
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmdXRjaCcsIGZ1bmN0aW9uKGV2ZW50KSB7IH0pOw==');
-    }
-    </script>
-    """,
-    height=0,
-)
 # ---------------------------------------------------------
 # Physiological Core Calculations
 # ---------------------------------------------------------
@@ -596,6 +560,19 @@ def run_streamlit():
         layout="centered"
     )
     
+    # Embedded Google Analytics 4 (GA4) Tracking (Measurement ID: G-M64Q7FNW83)
+    ga_html = """
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M64Q7FNW83"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-M64Q7FNW83');
+    </script>
+    """
+    st.components.v1.html(ga_html, height=0, width=0)
+    
         # Custom CSS for clinical layout (Universal Light & Dark Mode Compatible)
     st.markdown("""
         <style>
@@ -748,7 +725,7 @@ def run_streamlit():
     # 5 Tabs Setup - Sinha Phenotype moved to Tab 1 (immediately after Tab 0)
     tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "ℹ️ 指引簡介",
-        "🧬 1. Biomarkers Phenotype",
+        "🧬 1. 生物亞型預測",
         "🫁 2. 呼吸力學與通氣效率", 
         "🔄 3. 肺復張性評估(R/I)", 
         "🧠 4. 呼吸 efforts 與驅力",
