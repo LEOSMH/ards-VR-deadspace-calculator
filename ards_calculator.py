@@ -720,7 +720,8 @@ def run_streamlit():
     """, unsafe_allow_html=True)
     
     st.markdown('<div class="main-title">🫁 ARDS 精準生理監測與生物亞型大師級計算器</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitle">整合 R/I Ratio、AOP 校正驅動壓、通氣強度、自主呼吸 efforts 與發炎表型評估<br>👨‍⚕️ <b>作者：台大醫院呼吸治療師 辛明翰</b> | 📅 初版日期：2026/09/04 | 🔄 最新修訂：2026/09/10</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitle">整合 R/I Ratio、AOP 校正驅動壓、通氣強度、自主呼吸 efforts 與發炎表型評估<br>👨‍⚕️ <b>作者：台大醫院呼吸治療師 辛明翰</b> | 📅 初版日期：2026/09/04 | 🔄 最新修訂：2026/09/17</div>', unsafe_allow_html=True)
+    st.markdown('<div style="text-align: center; margin-top: -15px; margin-bottom: 20px;"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fards-calculator.streamlit.app&count_bg=%232980B9&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=App+Visitors&edge_flat=false" alt="App Visitors"/></div>', unsafe_allow_html=True)
     
     # 5 Tabs Setup - Sinha Phenotype moved to Tab 1 (immediately after Tab 0)
     tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs([
