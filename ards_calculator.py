@@ -552,35 +552,61 @@ def generate_stressindex_chestcompress_png(out_path='stressindex_chestcompress.p
         pass
 
 
-def get_visitor_count():
-    """Fetch and increment visitor count using CounterAPI with local persistent fallback (starts from 1)."""
+def get_visitor_count_from_cloud():
+    """Fetch and increment visitor count from resilient cloud APIs with local fallback (starts from 1)."""
     count = None
+    
+    # 1. Primary: CounterAPI.dev
     try:
         import urllib.request, json
-        url = "https://api.counterapi.dev/v1/ards_calculator_ntuh_v2026/visits/up"
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=2) as response:
+        url = "https://api.counterapi.dev/v1/ards_calc_ntuh_fresh_v2/visits/up"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+        with urllib.request.urlopen(req, timeout=4) as response:
             res_data = json.loads(response.read().decode("utf-8"))
-            if "count" in res_data:
+            if "count" in res_data and res_data["count"] is not None:
                 count = int(res_data["count"])
     except Exception:
         pass
 
-    if count is None:
+    # 2. Secondary: CodeTabs Counter API
+    if count is None or count <= 0:
+        try:
+            import urllib.request, json
+            url = "https://api.codetabs.com/v1/counter/?key=ards_calc_ntuh_fresh_v2"
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=4) as response:
+                val = response.read().decode("utf-8").strip()
+                if val.isdigit():
+                    count = int(val)
+                else:
+                    res_data = json.loads(val)
+                    if "count" in res_data:
+                        count = int(res_data["count"])
+        except Exception:
+            pass
+
+    # 3. Local persistent file fallback
+    if count is None or count <= 0:
         try:
             counter_file = "visitor_count.txt"
             if os.path.exists(counter_file):
-                with open(counter_file, "r") as f:
+                with open(counter_file, "r", encoding="utf-8") as f:
                     val = f.read().strip()
                     count = int(val) + 1 if val.isdigit() else 1
             else:
                 count = 1
-            with open(counter_file, "w") as f:
+            with open(counter_file, "w", encoding="utf-8") as f:
                 f.write(str(count))
         except Exception:
             count = 1
 
     return count
+
+def get_session_visitor_count(st):
+    """Manage visitor count using Streamlit session_state to prevent multiple increments during slider interactions."""
+    if "visitor_count" not in st.session_state:
+        st.session_state["visitor_count"] = get_visitor_count_from_cloud()
+    return st.session_state["visitor_count"]
 
 def run_streamlit():
     import streamlit as st
@@ -786,7 +812,7 @@ def run_streamlit():
     
     st.markdown('<div class="main-title">🫁 ARDS 精準生理監測與生物亞型大師級計算器</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitle">整合 R/I Ratio、AOP 校正驅動壓、通氣強度、自主呼吸 efforts 與發炎表型評估<br>👨‍⚕️ <b>作者：台大醫院呼吸治療師 辛明翰</b> | 📅 初版日期：2026/09/04 | 🔄 最新修訂：2026/09/17</div>', unsafe_allow_html=True)
-    visitor_count = get_visitor_count()
+    visitor_count = get_session_visitor_count(st)
     st.markdown(f"""
     <div style="display: flex; justify-content: center; align-items: center; margin-top: -10px; margin-bottom: 25px;">
         <div style="background: var(--secondary-background-color, rgba(41, 128, 185, 0.08)); border: 1px solid rgba(52, 152, 219, 0.35); border-radius: 20px; padding: 6px 20px; font-size: 13.5px; font-weight: 600; color: var(--text-color, #2c3e50); box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: inline-flex; align-items: center; gap: 8px;">
