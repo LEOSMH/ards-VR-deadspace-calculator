@@ -552,61 +552,6 @@ def generate_stressindex_chestcompress_png(out_path='stressindex_chestcompress.p
         pass
 
 
-def get_visitor_count_from_cloud():
-    """Fetch and increment visitor count from resilient cloud APIs with local fallback (starts from 1)."""
-    count = None
-    
-    # 1. Primary: CounterAPI.dev
-    try:
-        import urllib.request, json
-        url = "https://api.counterapi.dev/v1/ards_calc_ntuh_fresh_v2/visits/up"
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
-        with urllib.request.urlopen(req, timeout=4) as response:
-            res_data = json.loads(response.read().decode("utf-8"))
-            if "count" in res_data and res_data["count"] is not None:
-                count = int(res_data["count"])
-    except Exception:
-        pass
-
-    # 2. Secondary: CodeTabs Counter API
-    if count is None or count <= 0:
-        try:
-            import urllib.request, json
-            url = "https://api.codetabs.com/v1/counter/?key=ards_calc_ntuh_fresh_v2"
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=4) as response:
-                val = response.read().decode("utf-8").strip()
-                if val.isdigit():
-                    count = int(val)
-                else:
-                    res_data = json.loads(val)
-                    if "count" in res_data:
-                        count = int(res_data["count"])
-        except Exception:
-            pass
-
-    # 3. Local persistent file fallback
-    if count is None or count <= 0:
-        try:
-            counter_file = "visitor_count.txt"
-            if os.path.exists(counter_file):
-                with open(counter_file, "r", encoding="utf-8") as f:
-                    val = f.read().strip()
-                    count = int(val) + 1 if val.isdigit() else 1
-            else:
-                count = 1
-            with open(counter_file, "w", encoding="utf-8") as f:
-                f.write(str(count))
-        except Exception:
-            count = 1
-
-    return count
-
-def get_session_visitor_count(st):
-    """Manage visitor count using Streamlit session_state to prevent multiple increments during slider interactions."""
-    if "visitor_count" not in st.session_state:
-        st.session_state["visitor_count"] = get_visitor_count_from_cloud()
-    return st.session_state["visitor_count"]
 
 def run_streamlit():
     import streamlit as st
