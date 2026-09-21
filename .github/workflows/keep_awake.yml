@@ -1,0 +1,21 @@
+name: Keep Streamlit App Awake
+on:
+  schedule:
+    - cron: '0 */10 * * *' # 每 10 小時自動執行一次
+  workflow_dispatch: # 允許你手動按按鈕測試
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      
+    - name: Active commit
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        echo $(date) > keep_awake.txt
+        git add keep_awake.txt
+        git commit -m "Keep awake ping" || exit 0
+        git push
